@@ -54,4 +54,33 @@
   <main class="px-6 py-8 bg-gray-100">
     <RouterView />
   </main>
+
+  <ToastNotification />
 </template>
+
+<script>
+
+import axios from 'axios'
+
+import { useUserStore } from '@/stores/user'
+
+import ToastNotification from './components/ToastNotification.vue'
+
+export default {
+  setup() {
+    const userStore = useUserStore()
+    return { userStore }
+  },
+
+  components: {
+    ToastNotification,
+  },
+
+  beforeCreate() {
+    this.userStore.initStore()
+    const token = this.userStore.user.access
+    axios.defaults.headers.common["Authorization"] = token ? "Bearer " + token : "";
+  }
+}
+
+</script>

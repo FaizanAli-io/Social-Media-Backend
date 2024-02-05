@@ -12,13 +12,15 @@ export const useToastStore = defineStore({
 
     actions: {
         showToast(ms, message, classes) {
+            console.log("Toasting")
+
             this.ms = parseInt(ms)
             this.message = message
             this.classes = classes
             this.isVisible = true
 
             setTimeout(() => {
-                this.classes += '-translate-y-28'
+                this.classes += ' -translate-y-28'
             }, 10)
             
             setTimeout(() => {
