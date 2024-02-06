@@ -12,8 +12,6 @@ export const useToastStore = defineStore({
 
     actions: {
         showToast(ms, message, classes) {
-            console.log("Toasting")
-
             this.ms = parseInt(ms)
             this.message = message
             this.classes = classes
