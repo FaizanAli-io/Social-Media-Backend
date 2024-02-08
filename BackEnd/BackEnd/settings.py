@@ -42,6 +42,7 @@ INSTALLED_APPS = [
 
     # Custom
     'post',
+    'search',
     'account',
     'corsheaders',
     'rest_framework',

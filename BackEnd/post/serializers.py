@@ -4,7 +4,6 @@ from account.serializers import UserSerializer
 
 from .models import (
     Post,
-    # PostAttachment,
 )
 
 
@@ -13,4 +12,5 @@ class PostSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Post
-        fields = ['id', 'body', 'created_by', 'created_at_formatted']
+        fields = ['id', 'body', 'like_count',
+                  'created_by', 'created_at_formatted']

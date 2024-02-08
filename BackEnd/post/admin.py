@@ -1,10 +1,7 @@
 from django.contrib import admin
 
-from .models import (
-    Post,
-    PostAttachment,
-)
+from . import models
 
-
-admin.site.register(Post)
-admin.site.register(PostAttachment)
+admin.site.register(models.Like)
+admin.site.register(models.PostAttachment)
+admin.site.register(models.Post)

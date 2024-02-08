@@ -14,7 +14,7 @@
                 </p>
 
                 <p class="font-bold">
-                    Don't have an account? <RouterLink :to="{ 'name': 'signup' }" class="underline">Click Here</RouterLink>
+                    Don't have an account? <RouterLink :to="{ name: 'signup' }" class="underline">Click Here</RouterLink>
                     to sign up!
                 </p>
             </div>
