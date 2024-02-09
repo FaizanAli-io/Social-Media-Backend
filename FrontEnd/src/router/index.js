@@ -45,6 +45,11 @@ const router = createRouter({
       component: () => import('../views/FriendsView.vue')
     },
     {
+      path: '/:id',
+      name: 'postview',
+      component: () => import('../views/PostView.vue')
+    },
+    {
       path: '/about',
       name: 'about',
       // route level code-splitting
