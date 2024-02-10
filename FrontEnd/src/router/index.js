@@ -25,9 +25,9 @@ const router = createRouter({
       component: () => import('../views/FeedView.vue')
     },
     {
-      path: '/messages',
-      name: 'messages',
-      component: () => import('../views/MessagesView.vue')
+      path: '/chat',
+      name: 'chat',
+      component: () => import('../views/ChatView.vue')
     },
     {
       path: '/search',

@@ -1,4 +1,4 @@
-from django.urls import path
+from django.urls import path, include
 
 from . import views
 
@@ -9,4 +9,6 @@ urlpatterns = [
     path('<uuid:id>/like/', views.post_like, name='post-like'),
     path('<uuid:id>/comment/', views.post_comment, name='post-comment'),
     path('profile/<uuid:id>/', views.post_list_profile, name='post-profile'),
+
+    path('trends/', include('trends.urls')),
 ]

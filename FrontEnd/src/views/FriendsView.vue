@@ -8,11 +8,11 @@
             <div class="p-4 bg-white border border-gray-200 text-center rounded-lg">
                 <img src="https://i.pravatar.cc/300?img=70" class="mb-6 rounded-full">
 
-                <p><strong>{{ user.name }}</strong></p>
+                <p class="font-bold">{{ user.name }}</p>
 
                 <div class="mt-6 flex space-x-8 justify-around">
                     <p class="text-xs text-gray-500">{{ user.friend_count }} friends</p>
-                    <p class="text-xs text-gray-500">120 posts</p>
+                    <p class="text-xs text-gray-500">{{ user.post_count }} posts</p>
                 </div>
             </div>
 
@@ -24,22 +24,18 @@
             <!-- Friends -->
             <div v-if="friends.length > 0" class="p-4 bg-white border border-gray-200 rounded-lg grid grid-cols-2 gap-4">
 
-                <!-- <h2 class="text-xl mb-6"><strong>Friends</strong></h2> -->
-
                 <div v-for="user in friends" v-bind:key="user.id" class="p-4 text-center bg-gray-100 rounded-lg">
                     <img src="https://i.pravatar.cc/300?img=70" class="mb-6 rounded-full">
 
-                    <p>
-                        <strong>
-                            <RouterLink :to="{ name: 'profile', params: { id: user.id } }">
-                                {{ user.name }}
-                            </RouterLink>
-                        </strong>
+                    <p class="font-bold">
+                        <RouterLink :to="{ name: 'profile', params: { id: user.id } }">
+                            {{ user.name }}
+                        </RouterLink>
                     </p>
 
                     <div class="mt-6 flex space-x-8 justify-around">
                         <p class="text-xs text-gray-500">{{ user.friend_count }} friends</p>
-                        <p class="text-xs text-gray-500">120 posts</p>
+                        <p class="text-xs text-gray-500">{{ user.post_count }} posts</p>
                     </div>
                 </div>
 
@@ -49,23 +45,19 @@
             <div v-if="friendRequests.length > 0"
                 class="p-4 bg-white border border-gray-200 rounded-lg grid grid-cols-2 gap-4">
 
-                <!-- <h2 class="text-xl mb-6"><strong>Friend Requests</strong></h2> -->
-
                 <div v-for="request in friendRequests" v-bind:key="request.id"
                     class="p-4 text-center bg-gray-100 rounded-lg">
                     <img src="https://i.pravatar.cc/100?img=70" class="mb-6 mx-auto rounded-full">
 
-                    <p>
-                        <strong>
-                            <RouterLink :to="{ name: 'profile', params: { id: request.created_by.id } }">
-                                {{ request.created_by.name }}
-                            </RouterLink>
-                        </strong>
+                    <p class="font-bold">
+                        <RouterLink :to="{ name: 'profile', params: { id: request.created_by.id } }">
+                            {{ request.created_by.name }}
+                        </RouterLink>
                     </p>
 
                     <div class="mt-6 flex space-x-8 justify-around">
                         <p class="text-xs text-gray-500">{{ request.created_by.friend_count }} friends</p>
-                        <p class="text-xs text-gray-500">120 posts</p>
+                        <p class="text-xs text-gray-500">{{ request.created_by.post_count }} posts</p>
                     </div>
 
                     <div class="mt-6 space-x-4">
@@ -104,6 +96,7 @@ import CurrentTrends from '@/components/CurrentTrends.vue'
 
 export default {
     name: 'FriendsView',
+
     components: {
         PeopleYouMayKnow,
         CurrentTrends,

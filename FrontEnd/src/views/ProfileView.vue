@@ -8,20 +8,26 @@
             <div class="p-4 bg-white border border-gray-200 text-center rounded-lg">
                 <img src="https://i.pravatar.cc/300?img=70" class="mb-6 rounded-full">
 
-                <p><strong>{{ user.name }}</strong></p>
+                <p class="font-bold"> {{ user.name }} </p>
 
-                <div class="mt-6 flex space-x-8 justify-around">
+                <div class="mt-6 flex space-x-8 justify-around" v-if="user.id">
                     <RouterLink :to="{ name: 'friends', params: { id: user.id } }" class="text-xs text-gray-500">
                         {{ user.friend_count }} friends
                     </RouterLink>
-                    <p class="text-xs text-gray-500">120 posts</p>
+                    <p class="text-xs text-gray-500">{{ user.post_count }} posts</p>
                 </div>
 
                 <div class="mt-6">
                     <button v-if="userStore.user.id !== user.id" @click="sendFriendRequest"
                         class="inline-block py-2 px-3 bg-purple-600 text-white rounded-lg">
-                        Send Friend Request
+                        Friend Request
                     </button>
+
+                    <button v-if="userStore.user.id !== user.id" @click="sendMessage"
+                        class="inline-block ml-4 py-2 px-3 bg-purple-600 text-white rounded-lg">
+                        Message
+                    </button>
+
                     <button v-if="userStore.user.id === user.id" @click="signout"
                         class="inline-block py-2 px-3 bg-red-600 text-white rounded-lg">
                         Sign Out
@@ -80,7 +86,8 @@ import CurrentTrends from '@/components/CurrentTrends.vue'
 import FeedItem from '@/components/FeedItem.vue'
 
 export default {
-    name: 'FeedView',
+    name: 'ProfileView',
+
     components: {
         PeopleYouMayKnow,
         CurrentTrends,
@@ -95,8 +102,8 @@ export default {
 
     data() {
         return {
+            user: { id: null },
             posts: [],
-            user: {},
             body: '',
 
         }
@@ -155,6 +162,18 @@ export default {
                     } else {
                         this.toastStore.showToast(5000, 'Request sent successfully!', 'bg-emerald-300')
                     }
+                })
+                .catch(error => {
+                    console.log('Error: ', error)
+                })
+        },
+
+        sendMessage() {
+            axios
+                .get(`api/chat/${this.$route.params.id}/start/`)
+                .then(response => {
+                    console.log('Data: ', response.data)
+                    this.$router.push('/chat')
                 })
                 .catch(error => {
                     console.log('Error: ', error)

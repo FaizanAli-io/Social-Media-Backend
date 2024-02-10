@@ -8,47 +8,11 @@
         <div class="space-y-4">
 
             <!-- Hashtag 1 -->
-            <div class="flex items-center justify-between">
+            <div v-for="trend in trends" v-bind:key="trend.id" class="flex items-center justify-between">
                 <div class="flex items-center space-x-2">
                     <p class="text-xs">
-                        <strong>#codewithstein</strong><br>
-                        <span class="text-gray-500">180 posts</span>
-                    </p>
-                </div>
-
-                <a href="#" class="py-2 px-3 bg-purple-600 text-white text-xs rounded-lg">Explore</a>
-            </div>
-
-            <!-- Hashtag 2 -->
-            <div class="flex items-center justify-between">
-                <div class="flex items-center space-x-2">
-                    <p class="text-xs">
-                        <strong>#codewithstein</strong><br>
-                        <span class="text-gray-500">180 posts</span>
-                    </p>
-                </div>
-
-                <a href="#" class="py-2 px-3 bg-purple-600 text-white text-xs rounded-lg">Explore</a>
-            </div>
-
-            <!-- Hashtag 3 -->
-            <div class="flex items-center justify-between">
-                <div class="flex items-center space-x-2">
-                    <p class="text-xs">
-                        <strong>#codewithstein</strong><br>
-                        <span class="text-gray-500">180 posts</span>
-                    </p>
-                </div>
-
-                <a href="#" class="py-2 px-3 bg-purple-600 text-white text-xs rounded-lg">Explore</a>
-            </div>
-
-            <!-- Hashtag 4 -->
-            <div class="flex items-center justify-between">
-                <div class="flex items-center space-x-2">
-                    <p class="text-xs">
-                        <strong>#codewithstein</strong><br>
-                        <span class="text-gray-500">180 posts</span>
+                        <strong>#{{ trend.content }}</strong><br>
+                        <span class="text-gray-500">{{ trend.occurrence }} mentions</span>
                     </p>
                 </div>
 
@@ -59,3 +23,37 @@
 
     </div>
 </template>
+
+<script>
+import axios from 'axios';
+
+
+export default {
+    name: 'CurrentTrends',
+
+    data() {
+        return {
+            trends: [],
+        }
+    },
+
+    mounted() {
+        this.getTrends()
+    },
+
+    methods: {
+        getTrends() {
+            axios
+                .get('api/posts/trends/')
+                .then(response => {
+                    console.log("Response:", response.data)
+                    this.trends = response.data
+                })
+                .catch(error => {
+                    console.log("Error:", error)
+                })
+        }
+    }
+}
+
+</script>

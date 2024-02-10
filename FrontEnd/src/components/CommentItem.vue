@@ -4,12 +4,10 @@
         <div class="flex items-center space-x-6">
             <img src="https://i.pravatar.cc/300?img=70" class="w-[40px] rounded-full">
 
-            <p>
-                <strong>
-                    <RouterLink :to="{ name: 'profile', params: { id: comment.created_by.id } }">
-                        {{ comment.created_by.name }}
-                    </RouterLink>
-                </strong>
+            <p class="font-bold">
+                <RouterLink :to="{ name: 'profile', params: { id: comment.created_by.id } }">
+                    {{ comment.created_by.name }}
+                </RouterLink>
             </p>
         </div>
 

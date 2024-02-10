@@ -25,17 +25,15 @@
                 <div v-for="user in users" v-bind:key="user.id" class="p-4 text-center bg-gray-100 rounded-lg">
                     <img src="https://i.pravatar.cc/300?img=70" class="mb-6 rounded-full">
 
-                    <p>
-                        <strong>
-                            <RouterLink :to="{ name: 'profile', params: { id: user.id } }">
-                                {{ user.name }}
-                            </RouterLink>
-                        </strong>
+                    <p class="font-bold">
+                        <RouterLink :to="{ name: 'profile', params: { id: user.id } }">
+                            {{ user.name }}
+                        </RouterLink>
                     </p>
 
                     <div class="mt-6 flex space-x-8 justify-around">
                         <p class="text-xs text-gray-500">{{ user.friend_count }} friends</p>
-                        <p class="text-xs text-gray-500">120 posts</p>
+                        <p class="text-xs text-gray-500">{{ user.post_count }} posts</p>
                     </div>
                 </div>
 
@@ -70,6 +68,7 @@ import FeedItem from '@/components/FeedItem.vue'
 
 export default {
     name: 'SearchView',
+
     components: {
         PeopleYouMayKnow,
         CurrentTrends,

@@ -43,6 +43,7 @@ INSTALLED_APPS = [
     # Custom
     'post',
     'chat',
+    'trends',
     'search',
     'account',
     'corsheaders',

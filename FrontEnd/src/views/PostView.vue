@@ -53,7 +53,8 @@ import CommentItem from '@/components/CommentItem.vue'
 import FeedItem from '@/components/FeedItem.vue'
 
 export default {
-    name: 'FeedView',
+    name: 'PostView',
+
     components: {
         PeopleYouMayKnow,
         CurrentTrends,

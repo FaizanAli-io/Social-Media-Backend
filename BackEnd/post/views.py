@@ -5,9 +5,15 @@ from rest_framework.decorators import api_view
 from account.models import User
 from account.serializers import UserSerializer
 
+from trends.scripts import add_hashtags
+
 from .models import Post, Like, Comment
 
-from .serializers import PostSerializer, CommentSerializer, PostDetailSerializer
+from .serializers import (
+    PostSerializer,
+    CommentSerializer,
+    PostDetailSerializer,
+)
 
 from .forms import PostForm
 
@@ -52,6 +58,11 @@ def post_create(request):
         post = form.save(commit=False)
         post.created_by = request.user
         post.save()
+
+        request.user.post_count += 1
+        request.user.save()
+
+        add_hashtags(post.body)
 
         serializer = PostSerializer(post)
         return JsonResponse(serializer.data, safe=False)
