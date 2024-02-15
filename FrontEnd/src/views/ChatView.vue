@@ -11,13 +11,14 @@
                     <div v-for="convo in conversations" v-bind:key="convo.id" v-on:click="setActiveConvo(convo.id)"
                         class="flex items-center justify-between">
                         <div class="flex items-center space-x-2">
-                            <img src="https://i.pravatar.cc/300?img=70" class="w-[40px] rounded-full">
 
                             <div v-for="user in convo.users" v-bind:key="user.id">
+                                <img :src="user.avatar_url" class="w-[40px] rounded-full">
                                 <p v-if="user.id !== userStore.user.id" class="text-xs font-bold">
                                     {{ user.name }}
                                 </p>
                             </div>
+
                         </div>
 
                         <span class="text-xs text-gray-500">{{ convo.modified_at_formatted }} ago</span>
@@ -47,13 +48,13 @@
                                 </span>
                             </div>
                             <div class="flex-shrink-0 h-10 w-10 rounded-full bg-gray-300">
-                                <img src="https://i.pravatar.cc/300?img=70" class="w-[40px] rounded-full">
+                                <img :src="message.sent_by.avatar_url" class="w-[40px] rounded-full">
                             </div>
                         </div>
 
                         <div v-else class="flex w-full mt-2 space-x-3 max-w-md">
                             <div class="flex-shrink-0 h-10 w-10 rounded-full bg-gray-300">
-                                <img src="https://i.pravatar.cc/300?img=70" class="w-[40px] rounded-full">
+                                <img :src="message.sent_to.avatar_url" class="w-[40px] rounded-full">
                             </div>
                             <div>
                                 <div class="bg-gray-300 p-3 rounded-r-lg rounded-bl-lg">

@@ -2,7 +2,7 @@
     <!-- Header -->
     <div class="mb-6 flex items-center justify-between">
         <div class="flex items-center space-x-6">
-            <img src="https://i.pravatar.cc/300?img=70" class="w-[40px] rounded-full">
+            <img :src="comment.created_by.avatar_url" class="w-[40px] rounded-full">
 
             <p class="font-bold">
                 <RouterLink :to="{ name: 'profile', params: { id: comment.created_by.id } }">

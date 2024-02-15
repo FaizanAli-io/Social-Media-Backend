@@ -61,6 +61,7 @@ class Post(models.Model):
     attachments = models.ManyToManyField(PostAttachment, blank=True)
     created_by = models.ForeignKey(User, related_name='posts',
                                    on_delete=models.CASCADE)
+
     # Dates
     created_at = models.DateTimeField(auto_now_add=True)
 

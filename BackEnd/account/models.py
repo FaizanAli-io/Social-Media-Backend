@@ -63,6 +63,10 @@ class User(AbstractBaseUser, PermissionsMixin):
     USERNAME_FIELD = 'email'
     REQUIRED_FIELDS = []
 
+    def avatar_url(self):
+        return "http://127.0.0.1:8000" + self.avatar.url \
+            if self.avatar else ''
+
 
 class FriendRequest(models.Model):
 

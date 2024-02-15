@@ -40,14 +40,24 @@ const router = createRouter({
       component: () => import('../views/ProfileView.vue')
     },
     {
+      path: '/profile/edit',
+      name: 'editprofile',
+      component: () => import('../views/EditProfileView.vue')
+    },
+    {
       path: '/profile/:id/friends',
       name: 'friends',
       component: () => import('../views/FriendsView.vue')
     },
     {
       path: '/:id',
-      name: 'postview',
+      name: 'postdetail',
       component: () => import('../views/PostView.vue')
+    },
+    {
+      path: '/trends/:id',
+      name: 'trend',
+      component: () => import('../views/TrendView.vue')
     },
     {
       path: '/about',

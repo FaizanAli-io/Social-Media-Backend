@@ -16,7 +16,10 @@
                     </p>
                 </div>
 
-                <a href="#" class="py-2 px-3 bg-purple-600 text-white text-xs rounded-lg">Explore</a>
+                <RouterLink :to="{ name: 'trend', params: { id: trend.content } }"
+                    class="py-2 px-3 bg-purple-600 text-white text-xs rounded-lg">
+                    Explore
+                </RouterLink>
             </div>
 
         </div>
@@ -26,34 +29,33 @@
 
 <script>
 import axios from 'axios';
+import { RouterLink } from 'vue-router';
 
 
 export default {
     name: 'CurrentTrends',
-
     data() {
         return {
             trends: [],
-        }
+        };
     },
-
     mounted() {
-        this.getTrends()
+        this.getTrends();
     },
-
     methods: {
         getTrends() {
             axios
                 .get('api/posts/trends/')
                 .then(response => {
-                    console.log("Response:", response.data)
-                    this.trends = response.data
+                    console.log("Response:", response.data);
+                    this.trends = response.data;
                 })
                 .catch(error => {
-                    console.log("Error:", error)
-                })
+                    console.log("Error:", error);
+                });
         }
-    }
+    },
+    components: { RouterLink }
 }
 
 </script>

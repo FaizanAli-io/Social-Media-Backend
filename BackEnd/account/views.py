@@ -6,7 +6,7 @@ from rest_framework.decorators import (
     api_view,
 )
 
-from .forms import SignupForm
+from .forms import SignupForm, ProfileForm
 
 from .models import (
     User,
@@ -78,7 +78,24 @@ def me(request):
         'id': request.user.id,
         'name': request.user.name,
         'email': request.user.email,
+        'avatar': request.user.avatar_url(),
     })
+
+
+@api_view(['POST'])
+def edit_profile(request):
+    user = request.user
+
+    email = request.data.get('email')
+    if User.objects.exclude(id=user.id).filter(email=email).exists():
+        message = 'email already exists'
+    else:
+        form = ProfileForm(request.POST, request.FILES, instance=user)
+        if form.is_valid():
+            form.save()
+        message = 'success'
+
+    return JsonResponse({'message': message})
 
 
 @api_view(['POST'])

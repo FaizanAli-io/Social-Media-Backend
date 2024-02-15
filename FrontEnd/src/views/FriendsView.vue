@@ -6,7 +6,7 @@
 
             <!-- Your profile -->
             <div class="p-4 bg-white border border-gray-200 text-center rounded-lg">
-                <img src="https://i.pravatar.cc/300?img=70" class="mb-6 rounded-full">
+                <img :src="user.avatar_url" class="mb-6 rounded-full">
 
                 <p class="font-bold">{{ user.name }}</p>
 
@@ -25,7 +25,7 @@
             <div v-if="friends.length > 0" class="p-4 bg-white border border-gray-200 rounded-lg grid grid-cols-2 gap-4">
 
                 <div v-for="user in friends" v-bind:key="user.id" class="p-4 text-center bg-gray-100 rounded-lg">
-                    <img src="https://i.pravatar.cc/300?img=70" class="mb-6 rounded-full">
+                    <img :src="user.avatar_url" class="mb-6 rounded-full">
 
                     <p class="font-bold">
                         <RouterLink :to="{ name: 'profile', params: { id: user.id } }">
@@ -47,7 +47,7 @@
 
                 <div v-for="request in friendRequests" v-bind:key="request.id"
                     class="p-4 text-center bg-gray-100 rounded-lg">
-                    <img src="https://i.pravatar.cc/100?img=70" class="mb-6 mx-auto rounded-full">
+                    <img :src="request.created_by.avatar_url" class="mb-6 mx-auto rounded-full">
 
                     <p class="font-bold">
                         <RouterLink :to="{ name: 'profile', params: { id: request.created_by.id } }">

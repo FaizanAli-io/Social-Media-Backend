@@ -6,7 +6,7 @@
 
             <!-- Your profile -->
             <div class="p-4 bg-white border border-gray-200 text-center rounded-lg">
-                <img src="https://i.pravatar.cc/300?img=70" class="mb-6 rounded-full">
+                <img :src="user.avatar_url" class="mb-6 rounded-full">
 
                 <p class="font-bold"> {{ user.name }} </p>
 
@@ -28,8 +28,14 @@
                         Message
                     </button>
 
+
+                    <RouterLink v-if="userStore.user.id === user.id" :to="{ name: 'editprofile' }"
+                        class="inline-block py-2 px-3 bg-purple-600 text-white rounded-lg">
+                        Edit Profile
+                    </RouterLink>
+
                     <button v-if="userStore.user.id === user.id" @click="signout"
-                        class="inline-block py-2 px-3 bg-red-600 text-white rounded-lg">
+                        class="inline-block ml-4 py-2 px-3 bg-red-600 text-white rounded-lg">
                         Sign Out
                     </button>
                 </div>
@@ -84,6 +90,7 @@ import { useToastStore } from '@/stores/toast'
 import PeopleYouMayKnow from '@/components/PeopleYouMayKnow.vue'
 import CurrentTrends from '@/components/CurrentTrends.vue'
 import FeedItem from '@/components/FeedItem.vue'
+import { RouterLink } from 'vue-router'
 
 export default {
     name: 'ProfileView',
@@ -92,6 +99,7 @@ export default {
         PeopleYouMayKnow,
         CurrentTrends,
         FeedItem,
+        RouterLink
     },
 
     setup() {
