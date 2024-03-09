@@ -65,7 +65,7 @@ class User(AbstractBaseUser, PermissionsMixin):
 
     def avatar_url(self):
         return "http://127.0.0.1:8000" + self.avatar.url \
-            if self.avatar else ''
+            if self.avatar else 'https://placehold.co/300'
 
 
 class FriendRequest(models.Model):

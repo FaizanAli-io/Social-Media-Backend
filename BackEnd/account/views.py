@@ -1,4 +1,8 @@
-from django.http import JsonResponse
+from django.http import JsonResponse, HttpResponse
+
+from django.contrib.auth.forms import PasswordChangeForm
+
+from django.core.mail import send_mail
 
 from rest_framework.decorators import (
     authentication_classes,
@@ -87,15 +91,31 @@ def edit_profile(request):
     user = request.user
 
     email = request.data.get('email')
+
     if User.objects.exclude(id=user.id).filter(email=email).exists():
-        message = 'email already exists'
+        return JsonResponse({'message': 'email already exists'})
+
     else:
         form = ProfileForm(request.POST, request.FILES, instance=user)
         if form.is_valid():
             form.save()
-        message = 'success'
 
-    return JsonResponse({'message': message})
+        serializer_data = UserSerializer(user).data
+        return JsonResponse({'message': 'success', 'user': serializer_data})
+
+
+@api_view(['POST'])
+def edit_password(request):
+    form = PasswordChangeForm(data=request.POST, user=request.user)
+
+    if form.is_valid():
+        form.save()
+
+        return JsonResponse({"message": "success"})
+
+    else:
+
+        return JsonResponse({"message": form.errors.as_json()}, safe=False)
 
 
 @api_view(['POST'])
@@ -113,8 +133,33 @@ def signup(request):
     })
 
     if form.is_valid():
-        form.save()
-    else:
-        message = 'error'
+        user = form.save()
+        user.is_active = False
+        user.save()
 
-    return JsonResponse({'message': message})
+        url = f"http://localhost:8000/api/activateemail/?email={user.email}&id={user.id}"
+
+        send_mail(
+            "Verify your account",
+            f"To verify your account click on the following url: {url}",
+            'noreply@example.com',
+            [user.email],
+            fail_silently=False,
+        )
+
+    else:
+        message = form.errors.as_json()
+
+    return JsonResponse({'message': message}, safe=False)
+
+
+def activate_email(request):
+    id = request.GET.get('id', '')
+    email = request.GET.get('email', '')
+
+    if id and email:
+        user = User.objects.get(id=id, email=email)
+        user.is_active = True
+        user.save()
+
+    return HttpResponse(f"Thank you for activating your account {user.name}")

@@ -52,10 +52,15 @@
                     <div class="p-4">
                         <textarea v-model="body" class="p-4 w-full bg-gray-100 rounded-lg"
                             placeholder="What are you thinking about?"></textarea>
+
+                        <div id="preview" v-if="url"><img :src="url" class="w-[100px] rounded-xl mt-3"></div>
                     </div>
 
                     <div class="p-4 border-t border-gray-100 flex justify-between">
-                        <a href="#" class="inline-block py-4 px-6 bg-gray-600 text-white rounded-lg">Attach image</a>
+                        <label class="inline-block py-4 px-6 bg-gray-600 text-white rounded-lg">
+                            <input type="file" ref="file" @change="onFileChange"> Attach image
+                        </label>
+
                         <button class="inline-block py-4 px-6 bg-purple-600 text-white rounded-lg">Post</button>
                     </div>
                 </form>
@@ -80,6 +85,12 @@
     </div>
 </template>
 
+<style>
+input [type="file"] {
+    display: none;
+}
+</style>
+
 <script>
 
 import axios from 'axios'
@@ -98,8 +109,8 @@ export default {
     components: {
         PeopleYouMayKnow,
         CurrentTrends,
+        RouterLink,
         FeedItem,
-        RouterLink
     },
 
     setup() {
@@ -112,6 +123,7 @@ export default {
         return {
             user: { id: null },
             posts: [],
+            url: null,
             body: '',
 
         }
@@ -132,6 +144,11 @@ export default {
     },
 
     methods: {
+        onFileChange(e) {
+            const file = e.target.files[0]
+            this.url = URL.createObjectURL(file)
+        },
+
         getFeed() {
             axios
                 .get(`api/posts/profile/${this.$route.params.id}`)
@@ -148,11 +165,22 @@ export default {
         submitForm() {
             console.log('Submit Form', this.body)
 
+            let formData = new FormData()
+            formData.append('body', this.body)
+            formData.append('image', this.$refs.file.files[0])
+
             axios
-                .post('api/posts/create/', { 'body': this.body })
+                .post('api/posts/create/', formData, {
+                    'headers': {
+                        'Content-Type': 'multipart/form-data',
+                    }
+                })
                 .then(response => {
                     console.log('Data: ', response.data)
                     this.posts.unshift(response.data)
+                    this.$refs.file.value = null
+                    this.user.post_count += 1
+                    this.url = null
                     this.body = ''
                 })
                 .catch(error => {

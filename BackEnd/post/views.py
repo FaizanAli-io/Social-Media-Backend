@@ -12,10 +12,9 @@ from .models import Post, Like, Comment
 from .serializers import (
     PostSerializer,
     CommentSerializer,
-    PostDetailSerializer,
 )
 
-from .forms import PostForm
+from .forms import PostForm, AttachmentForm
 
 
 @api_view(['GET'])
@@ -37,7 +36,8 @@ def post_list(request):
 @api_view(['GET'])
 def post_detail(request, id):
     post = Post.objects.get(id=id)
-    return JsonResponse(PostDetailSerializer(post).data, safe=False)
+    serializer = PostSerializer(post)
+    return JsonResponse(serializer.data, safe=False)
 
 
 @api_view(['GET'])
@@ -56,20 +56,30 @@ def post_list_profile(request, id):
 
 @api_view(['POST'])
 def post_create(request):
-    form = PostForm(request.data)
+    attachment = None
+    post_form = PostForm(request.POST)
+    attachment_form = AttachmentForm(request.POST, request.FILES)
 
-    if form.is_valid():
-        post = form.save(commit=False)
+    if attachment_form.is_valid():
+        attachment = attachment_form.save(commit=False)
+        attachment.created_by = request.user
+        attachment.save()
+
+    if post_form.is_valid():
+        post = post_form.save(commit=False)
         post.created_by = request.user
         post.save()
+
+        if attachment:
+            post.attachments.add(attachment)
 
         request.user.post_count += 1
         request.user.save()
 
         add_hashtags(post.body)
 
-        serializer = PostSerializer(post)
-        return JsonResponse(serializer.data, safe=False)
+        return JsonResponse(PostSerializer(post).data, safe=False)
+
     else:
         return JsonResponse({'error': 'post not created'})
 

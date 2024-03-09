@@ -2,13 +2,13 @@
     <div class="max-w-7xl mx-auto grid grid-cols-2 gap-4">
         <div class="main-left">
             <div class="p-12 bg-white border border-grey-200 rounded-lg">
-                <h1 class="mb-6 text-2xl"> Edit Profile </h1>
+                <h1 class="mb-6 text-2xl"> Edit Password </h1>
 
                 <p class="mb-6 text-grey-500">
-                    Here you can change edit your profile.
+                    Here you can change your password.
                 </p>
 
-                <RouterLink to="/profile/edit/password" class="underline">Edit Password</RouterLink>
+                <RouterLink to="/profile/edit" class="underline">Back to Edit Profile</RouterLink>
             </div>
         </div>
 
@@ -16,20 +16,17 @@
             <div class="p-12 bg-white border border-grey-200 rounded-lg">
                 <form class="space-y-6" v-on:submit.prevent="SubmitForm">
                     <div>
-                        <label>Name</label><br>
-                        <input type="text" v-model="form.name" placeholder="Your full name"
+                        <label>Old Password</label><br>
+                        <input type="password" v-model="form.old_password" placeholder="Your old password"
                             class="w-full mt-2 py-4 px-6 border border-grey-200 rounded-lg">
-                    </div>
 
-                    <div>
-                        <label>E-mail</label><br>
-                        <input type="email" v-model="form.email" placeholder="Your e-mail address"
+                        <label>New Password</label><br>
+                        <input type="password" v-model="form.new_password1" placeholder="Your new password"
                             class="w-full mt-2 py-4 px-6 border border-grey-200 rounded-lg">
-                    </div>
 
-                    <div>
-                        <label>Avatar</label><br>
-                        <input type="file" ref="file">
+                        <label>Repeat Password</label><br>
+                        <input type="password" v-model="form.new_password2" placeholder="Repeat password"
+                            class="w-full mt-2 py-4 px-6 border border-grey-200 rounded-lg">
                     </div>
 
                     <template v-if="errors.length > 0">
@@ -64,8 +61,9 @@ export default {
     data() {
         return {
             form: {
-                name: this.userStore.user.name,
-                email: this.userStore.user.email,
+                old_password: '',
+                new_password1: '',
+                new_password2: '',
             },
             errors: [],
         }
@@ -75,22 +73,18 @@ export default {
         SubmitForm() {
             this.errors = []
 
-            if (this.form.name === '') {
-                this.errors.push('Your name is missing')
-            }
-
-            if (this.form.email === '') {
-                this.errors.push('Your E-mail is missing')
+            if (this.form.new_password1 !== this.form.new_password2) {
+                this.errors.push('Your passwords do not match')
             }
 
             if (this.errors.length === 0) {
                 let formData = new FormData()
-                formData.append('name', this.form.name)
-                formData.append('email', this.form.email)
-                formData.append('avatar', this.$refs.file.files[0])
+                formData.append('old_password', this.form.old_password)
+                formData.append('new_password1', this.form.new_password1)
+                formData.append('new_password2', this.form.new_password2)
 
                 axios
-                    .post('/api/editprofile/', formData, {
+                    .post('/api/editpassword/', formData, {
                         'headers': {
                             'Content-Type': 'multipart/form-data',
                         }
@@ -99,17 +93,16 @@ export default {
                         if (response.data.message === 'success') {
                             this.toastStore.showToast(5000, 'Information updated', 'bg-emerald-500')
 
-                            this.userStore.setUserInfo({
-                                id: this.userStore.user.id,
-                                name: this.form.name,
-                                email: this.form.email,
-                                avatar: response.data.user.get_avatar,
-                            })
-
-                            this.$router.back()
+                            this.$router.push(`/profile/${this.userStore.user.id}`)
 
                         } else {
-                            this.toastStore.showToast(5000, response.data.message, 'bg-red-300')
+                            this.toastStore.showToast(5000, 'Something went wrong', 'bg-red-300')
+
+                            let data = JSON.parse(response.data.message)
+
+                            for (const error in data) {
+                                this.errors.push(data[error][0].message)
+                            }
                         }
                     })
                     .catch(error => {

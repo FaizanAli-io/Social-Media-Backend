@@ -7,9 +7,12 @@
                 </h1>
 
                 <p class="mb-6 text-grey-500">
-                    Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et
-                    dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip
-                    ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu
+                    Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore
+                    et
+                    dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut
+                    aliquip
+                    ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum
+                    dolore eu
                     fugiat nulla pariatur.
                 </p>
 
@@ -111,7 +114,7 @@ export default {
                     .post('/api/signup/', this.form)
                     .then(response => {
                         if (response.data.message === 'success') {
-                            this.toastStore.showToast(5000, 'The user is registered, please log in.', 'bg-emerald-500')
+                            this.toastStore.showToast(5000, 'The user is registered, please activate your account via the link sent to your email address.', 'bg-emerald-500')
 
                             this.form.name = ''
                             this.form.email = ''
@@ -119,6 +122,12 @@ export default {
                             this.form.password2 = ''
                         } else {
                             this.toastStore.showToast(5000, 'Something went wrong, please try again.', 'bg-red-300')
+
+                            let data = JSON.parse(response.data.message)
+
+                            for (const error in data) {
+                                this.errors.push(data[error][0].message)
+                            }
                         }
                     })
                     .catch(error => {

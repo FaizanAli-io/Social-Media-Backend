@@ -50,6 +50,10 @@ class PostAttachment(models.Model):
     created_by = models.ForeignKey(User, related_name='post_attachments',
                                    on_delete=models.CASCADE)
 
+    def image_url(self):
+        return "http://127.0.0.1:8000" + self.image.url \
+            if self.image else ''
+
 
 class Post(models.Model):
 

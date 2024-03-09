@@ -1,20 +1,18 @@
-from rest_framework import serializers
+from rest_framework.serializers import ModelSerializer
 
 from account.serializers import UserSerializer
 
-from .models import Post, Comment
+from .models import Post, Comment, PostAttachment
 
 
-class PostSerializer(serializers.ModelSerializer):
-    created_by = UserSerializer(read_only=True)
+class PostAttachmentSerializer(ModelSerializer):
 
     class Meta:
-        model = Post
-        fields = ['id', 'body', 'like_count', 'comment_count',
-                  'created_by', 'created_at_formatted']
+        model = PostAttachment
+        fields = ['id', 'image_url']
 
 
-class CommentSerializer(serializers.ModelSerializer):
+class CommentSerializer(ModelSerializer):
     created_by = UserSerializer(read_only=True)
 
     class Meta:
@@ -22,11 +20,12 @@ class CommentSerializer(serializers.ModelSerializer):
         fields = ['id', 'body', 'created_by', 'created_at_formatted']
 
 
-class PostDetailSerializer(serializers.ModelSerializer):
+class PostSerializer(ModelSerializer):
     created_by = UserSerializer(read_only=True)
     comments = CommentSerializer(read_only=True, many=True)
+    attachments = PostAttachmentSerializer(read_only=True, many=True)
 
     class Meta:
         model = Post
-        fields = ['id', 'body', 'like_count', 'comment_count',
-                  'comments', 'created_by', 'created_at_formatted']
+        fields = ['id', 'body', 'like_count', 'comment_count', 'comments',
+                  'created_by', 'created_at_formatted', 'attachments']
