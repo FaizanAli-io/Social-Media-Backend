@@ -5,7 +5,7 @@ def add_hashtags(post):
     hashtag_count = {}
 
     for word in post.split():
-        if word[0] == '#':
+        if word[0] == "#":
             hashtag = word[1:]
             if hashtag in hashtag_count:
                 hashtag_count[hashtag] += 1

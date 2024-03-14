@@ -6,13 +6,13 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('account', '0004_rename_friends_count_user_friend_count'),
+        ("account", "0004_rename_friends_count_user_friend_count"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='user',
-            name='post_count',
+            model_name="user",
+            name="post_count",
             field=models.IntegerField(default=0),
         ),
     ]

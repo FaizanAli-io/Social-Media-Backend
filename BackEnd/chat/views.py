@@ -16,19 +16,19 @@ from .serializers import (
 )
 
 
-@api_view(['GET'])
+@api_view(["GET"])
 def conversation_list(request):
     conversations = Conversation.objects.filter(users__in=[request.user])
     serializer = ConversationSerializer(conversations, many=True)
     return JsonResponse(serializer.data, safe=False)
 
 
-@api_view(['GET'])
+@api_view(["GET"])
 def start_convo(request, pk):
     receiver = User.objects.get(pk=pk)
-    conversations = Conversation.objects.filter(
-        users__in=[request.user]).filter(
-            users__in=[receiver])
+    conversations = Conversation.objects.filter(users__in=[request.user]).filter(
+        users__in=[receiver]
+    )
 
     if conversations.exists():
         conversation = conversations.first()
@@ -41,16 +41,17 @@ def start_convo(request, pk):
 
     serializer = ConversationDetailSerializer(conversation)
 
-    return JsonResponse({
-        'conversation': serializer.data,
-        'created': created,
-    })
+    return JsonResponse(
+        {
+            "conversation": serializer.data,
+            "created": created,
+        }
+    )
 
 
-@api_view(['POST'])
+@api_view(["POST"])
 def send_message(request, pk):
-    conversation = Conversation.objects.filter(
-        users__in=[request.user]).get(pk=pk)
+    conversation = Conversation.objects.filter(users__in=[request.user]).get(pk=pk)
 
     for user in conversation.users.all():
         if user.id != request.user.id:
@@ -58,7 +59,7 @@ def send_message(request, pk):
 
     message = ConversationMessage.objects.create(
         conversation=conversation,
-        body=request.data['body'],
+        body=request.data["body"],
         sent_by=request.user,
         sent_to=receiver,
     )
@@ -67,9 +68,8 @@ def send_message(request, pk):
     return JsonResponse(serializer.data, safe=False)
 
 
-@api_view(['GET'])
+@api_view(["GET"])
 def conversation_detail(request, pk):
-    conversation = Conversation.objects.filter(
-        users__in=[request.user]).get(pk=pk)
+    conversation = Conversation.objects.filter(users__in=[request.user]).get(pk=pk)
     serializer = ConversationDetailSerializer(conversation)
     return JsonResponse(serializer.data, safe=False)

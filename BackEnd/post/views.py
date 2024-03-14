@@ -6,6 +6,7 @@ from account.models import User
 from account.serializers import UserSerializer
 
 from trends.scripts import add_hashtags
+from notification.utils import create_notification
 
 from .models import Post, Like, Comment
 
@@ -17,7 +18,7 @@ from .serializers import (
 from .forms import PostForm, AttachmentForm
 
 
-@api_view(['GET'])
+@api_view(["GET"])
 def post_list(request):
     user_ids = [request.user.id]
     for user in request.user.friends.all():
@@ -25,7 +26,7 @@ def post_list(request):
 
     posts = Post.objects.filter(created_by_id__in=user_ids)
 
-    trend = request.GET.get('trend', '')
+    trend = request.GET.get("trend", "")
     if trend:
         posts = Post.objects.filter(body__icontains=trend)
 
@@ -33,14 +34,14 @@ def post_list(request):
     return JsonResponse(serializer.data, safe=False)
 
 
-@api_view(['GET'])
+@api_view(["GET"])
 def post_detail(request, id):
     post = Post.objects.get(id=id)
     serializer = PostSerializer(post)
     return JsonResponse(serializer.data, safe=False)
 
 
-@api_view(['GET'])
+@api_view(["GET"])
 def post_list_profile(request, id):
     user = User.objects.get(pk=id)
     user_serializer = UserSerializer(user)
@@ -48,17 +49,22 @@ def post_list_profile(request, id):
     posts = Post.objects.filter(created_by=user)
     post_serializer = PostSerializer(posts, many=True)
 
-    return JsonResponse({
-        'user': user_serializer.data,
-        'posts': post_serializer.data,
-    }, safe=False)
+    return JsonResponse(
+        {
+            "user": user_serializer.data,
+            "posts": post_serializer.data,
+        },
+        safe=False,
+    )
 
 
-@api_view(['POST'])
+@api_view(["POST"])
 def post_create(request):
     attachment = None
     post_form = PostForm(request.POST)
     attachment_form = AttachmentForm(request.POST, request.FILES)
+
+    print("start", post_form.data, "stop")
 
     if attachment_form.is_valid():
         attachment = attachment_form.save(commit=False)
@@ -81,10 +87,10 @@ def post_create(request):
         return JsonResponse(PostSerializer(post).data, safe=False)
 
     else:
-        return JsonResponse({'error': 'post not created'})
+        return JsonResponse({"error": "post not created"})
 
 
-@api_view(['POST'])
+@api_view(["POST"])
 def post_like(request, id):
     post = Post.objects.get(id=id)
 
@@ -94,17 +100,19 @@ def post_like(request, id):
         post.likes.add(like)
         post.save()
 
-        message = 'like created'
+        create_notification(request, "postlike", post_id=post.id)
+
+        message = "like created"
     else:
-        message = 'already liked'
+        message = "already liked"
 
-    return JsonResponse({'message': message})
+    return JsonResponse({"message": message})
 
 
-@api_view(['POST'])
+@api_view(["POST"])
 def post_comment(request, id):
     comment = Comment.objects.create(
-        body=request.data.get('body'),
+        body=request.data.get("body"),
         created_by=request.user,
     )
 
@@ -112,5 +120,7 @@ def post_comment(request, id):
     post.comments.add(comment)
     post.comment_count += 1
     post.save()
+
+    create_notification(request, "postcomment", post_id=post.id)
 
     return JsonResponse(CommentSerializer(comment).data, safe=False)

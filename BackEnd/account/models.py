@@ -15,7 +15,7 @@ class CustomUserManager(UserManager):
 
     def _create_user(self, name, email, password, **extra_fields):
         if not email:
-            raise ValueError('You must provide a valid E-mail address')
+            raise ValueError("You must provide a valid E-mail address")
 
         email = self.normalize_email(email)
         user = self.model(email=email, name=name, **extra_fields)
@@ -25,13 +25,13 @@ class CustomUserManager(UserManager):
         return user
 
     def create_user(self, name=None, email=None, password=None, **extra_fields):
-        extra_fields.setdefault('is_staff', False)
-        extra_fields.setdefault('is_superuser', False)
+        extra_fields.setdefault("is_staff", False)
+        extra_fields.setdefault("is_superuser", False)
         return self._create_user(name, email, password, **extra_fields)
 
     def create_superuser(self, name=None, email=None, password=None, **extra_fields):
-        extra_fields.setdefault('is_staff', True)
-        extra_fields.setdefault('is_superuser', True)
+        extra_fields.setdefault("is_staff", True)
+        extra_fields.setdefault("is_superuser", True)
         return self._create_user(name, email, password, **extra_fields)
 
 
@@ -42,11 +42,12 @@ class User(AbstractBaseUser, PermissionsMixin):
 
     # Attributes
     email = models.EmailField(unique=True)
-    name = models.CharField(max_length=255, blank=True, null=True, default='')
-    avatar = models.ImageField(upload_to='avatars', blank=True, null=True)
+    name = models.CharField(max_length=255, blank=True, null=True, default="")
+    avatar = models.ImageField(upload_to="avatars", blank=True, null=True)
     post_count = models.IntegerField(default=0)
     friend_count = models.IntegerField(default=0)
-    friends = models.ManyToManyField('self')
+    friends = models.ManyToManyField("self", blank=True)
+    people_you_may_know = models.ManyToManyField("self", blank=True)
 
     # Permissions
     is_active = models.BooleanField(default=True)
@@ -59,37 +60,41 @@ class User(AbstractBaseUser, PermissionsMixin):
 
     objects = CustomUserManager()
 
-    EMAIL_FIELD = 'email'
-    USERNAME_FIELD = 'email'
+    EMAIL_FIELD = "email"
+    USERNAME_FIELD = "email"
     REQUIRED_FIELDS = []
 
     def avatar_url(self):
-        return "http://127.0.0.1:8000" + self.avatar.url \
-            if self.avatar else 'https://placehold.co/300'
+        return (
+            "http://127.0.0.1:8000" + self.avatar.url
+            if self.avatar
+            else "https://placehold.co/300"
+        )
 
 
 class FriendRequest(models.Model):
 
-    SENT = 'sent'
-    ACCEPTED = 'accepted'
-    REJECTED = 'rejected'
+    SENT = "sent"
+    ACCEPTED = "accepted"
+    REJECTED = "rejected"
 
     STATUS_CHOICES = (
-        (SENT, 'Sent'),
-        (ACCEPTED, 'Accepted'),
-        (REJECTED, 'Rejected'),
+        (SENT, "Sent"),
+        (ACCEPTED, "Accepted"),
+        (REJECTED, "Rejected"),
     )
 
     # Primary Key
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
 
     # Attributes
-    created_by = models.ForeignKey(User, related_name='created_friend_request',
-                                   on_delete=models.CASCADE)
-    created_for = models.ForeignKey(User, related_name='received_friend_request',
-                                    on_delete=models.CASCADE)
-    status = models.CharField(max_length=20, choices=STATUS_CHOICES,
-                              default=SENT)
+    created_by = models.ForeignKey(
+        User, related_name="created_friend_request", on_delete=models.CASCADE
+    )
+    created_for = models.ForeignKey(
+        User, related_name="received_friend_request", on_delete=models.CASCADE
+    )
+    status = models.CharField(max_length=20, choices=STATUS_CHOICES, default=SENT)
 
     # Dates
     created_at = models.DateTimeField(auto_now_add=True)

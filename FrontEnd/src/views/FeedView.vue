@@ -80,10 +80,17 @@ export default {
         },
 
         submitForm() {
-            console.log('Submit Form', this.body)
+            console.log('Submit Form:', this.body)
+
+            let formData = new FormData()
+            formData.append('body', this.body)
 
             axios
-                .post('api/posts/create/', { 'body': this.body })
+                .post('api/posts/create/', formData, {
+                    'headers': {
+                        'Content-Type': 'multipart/form-data',
+                    }
+                })
                 .then(response => {
                     console.log('Data: ', response.data)
                     this.posts.unshift(response.data)

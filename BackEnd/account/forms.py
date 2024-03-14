@@ -8,11 +8,11 @@ class SignupForm(UserCreationForm):
 
     class Meta:
         model = User
-        fields = ['name', 'email', 'password1', 'password2']
+        fields = ["name", "email", "password1", "password2"]
 
 
 class ProfileForm(ModelForm):
 
     class Meta:
         model = User
-        fields = ['name', 'email', 'avatar']
+        fields = ["name", "email", "avatar"]

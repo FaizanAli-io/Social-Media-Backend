@@ -163,7 +163,7 @@ export default {
         },
 
         submitForm() {
-            console.log('Submit Form', this.body)
+            console.log('Submit Form:', this.body)
 
             let formData = new FormData()
             formData.append('body', this.body)

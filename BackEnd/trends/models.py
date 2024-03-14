@@ -16,7 +16,7 @@ class Hashtag(models.Model):
     modified_at = models.DateTimeField(auto_now=True)
 
     def __str__(self) -> str:
-        return f'#{self.content} - {self.occurrence}'
+        return f"#{self.content} - {self.occurrence}"
 
     class Meta:
-        ordering = ['-occurrence']
+        ordering = ["-occurrence"]

@@ -9,7 +9,7 @@ class PostAttachmentSerializer(ModelSerializer):
 
     class Meta:
         model = PostAttachment
-        fields = ['id', 'image_url']
+        fields = ["id", "image_url"]
 
 
 class CommentSerializer(ModelSerializer):
@@ -17,7 +17,7 @@ class CommentSerializer(ModelSerializer):
 
     class Meta:
         model = Comment
-        fields = ['id', 'body', 'created_by', 'created_at_formatted']
+        fields = ["id", "body", "created_by", "created_at_formatted"]
 
 
 class PostSerializer(ModelSerializer):
@@ -27,5 +27,13 @@ class PostSerializer(ModelSerializer):
 
     class Meta:
         model = Post
-        fields = ['id', 'body', 'like_count', 'comment_count', 'comments',
-                  'created_by', 'created_at_formatted', 'attachments']
+        fields = [
+            "id",
+            "body",
+            "like_count",
+            "comment_count",
+            "comments",
+            "created_by",
+            "created_at_formatted",
+            "attachments",
+        ]

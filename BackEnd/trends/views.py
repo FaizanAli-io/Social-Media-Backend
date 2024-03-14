@@ -11,10 +11,10 @@ class HashtagSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Hashtag
-        fields = ['id', 'content', 'occurrence', 'modified_at']
+        fields = ["id", "content", "occurrence", "modified_at"]
 
 
-@api_view(['GET'])
+@api_view(["GET"])
 def get_trending(request):
     yesterday = timezone.now() - timezone.timedelta(1)
     objects = Hashtag.objects.filter(modified_at__gte=yesterday)[:5]

@@ -6,12 +6,12 @@ from django.db import migrations
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('trends', '0002_rename_count_hashtag_occurrence'),
+        ("trends", "0002_rename_count_hashtag_occurrence"),
     ]
 
     operations = [
         migrations.AlterModelOptions(
-            name='hashtag',
-            options={'ordering': ['-occurrence']},
+            name="hashtag",
+            options={"ordering": ["-occurrence"]},
         ),
     ]

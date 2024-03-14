@@ -6,13 +6,13 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('trends', '0003_alter_hashtag_options'),
+        ("trends", "0003_alter_hashtag_options"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='hashtag',
-            name='modified_at',
+            model_name="hashtag",
+            name="modified_at",
             field=models.DateTimeField(auto_now=True),
         ),
     ]

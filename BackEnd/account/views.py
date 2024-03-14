@@ -22,49 +22,69 @@ from .serializers import (
     FriendRequestSerializer,
 )
 
+from notification.utils import create_notification
 
-@api_view(['GET'])
+
+@api_view(["GET"])
 def friends(request, pk):
+
     user = User.objects.get(pk=pk)
+
+    print(request.user.name)
+    print(user.name)
+
     friends = user.friends.all()
-    requests = FriendRequest.objects.filter(
-        created_for=request.user,
-        status=FriendRequest.SENT,
-    ) if user == request.user else []
+    requests = (
+        FriendRequest.objects.filter(
+            created_for=request.user,
+            status=FriendRequest.SENT,
+        )
+        if user == request.user
+        else []
+    )
 
-    return JsonResponse({
-        'user': UserSerializer(user).data,
-        'friends': UserSerializer(friends, many=True).data,
-        'requests': FriendRequestSerializer(requests, many=True).data,
-    }, safe=False)
+    return JsonResponse(
+        {
+            "user": UserSerializer(user).data,
+            "friends": UserSerializer(friends, many=True).data,
+            "requests": FriendRequestSerializer(requests, many=True).data,
+        },
+        safe=False,
+    )
 
 
-@api_view(['POST'])
+@api_view(["POST"])
 def send_friend_request(request, pk):
     user = User.objects.get(pk=pk)
-    check1 = FriendRequest.objects.filter(
-        created_for=request.user, created_by=user)
-    check2 = FriendRequest.objects.filter(
-        created_for=user, created_by=request.user)
+    check1 = FriendRequest.objects.filter(created_for=request.user, created_by=user)
+    check2 = FriendRequest.objects.filter(created_for=user, created_by=request.user)
 
     if not (check1 or check2):
-        FriendRequest.objects.create(
-            created_by=request.user,
-            created_for=user)
-        message = 'friend request created'
+        friend_request = FriendRequest.objects.create(
+            created_by=request.user, created_for=user
+        )
+        message = "friend request created"
+
+        create_notification(
+            request,
+            "sentrequest",
+            friend_request_id=friend_request.id,
+        )
+
     else:
-        message = 'friend request already exists'
+        message = "friend request already exists"
 
-    return JsonResponse({'message': message})
+    return JsonResponse({"message": message})
 
 
-@api_view(['POST'])
+@api_view(["POST"])
 def handle_request(request, pk, status):
     user = User.objects.get(pk=pk)
-    friendRequest = FriendRequest.objects.filter(
-        created_for=request.user).get(created_by=user)
-    friendRequest.status = status
-    friendRequest.save()
+    friend_request = FriendRequest.objects.filter(created_for=request.user).get(
+        created_by=user
+    )
+    friend_request.status = status
+    friend_request.save()
 
     user.friends.add(request.user)
     request.user.friend_count += 1
@@ -73,27 +93,35 @@ def handle_request(request, pk, status):
     request.user.save()
     user.save()
 
-    return JsonResponse({'message': 'friend request updated'})
+    create_notification(
+        request,
+        f"{status}request",
+        friend_request_id=friend_request.id,
+    )
+
+    return JsonResponse({"message": "friend request updated"})
 
 
-@api_view(['GET'])
+@api_view(["GET"])
 def me(request):
-    return JsonResponse({
-        'id': request.user.id,
-        'name': request.user.name,
-        'email': request.user.email,
-        'avatar': request.user.avatar_url(),
-    })
+    return JsonResponse(
+        {
+            "id": request.user.id,
+            "name": request.user.name,
+            "email": request.user.email,
+            "avatar": request.user.avatar_url(),
+        }
+    )
 
 
-@api_view(['POST'])
+@api_view(["POST"])
 def edit_profile(request):
     user = request.user
 
-    email = request.data.get('email')
+    email = request.data.get("email")
 
     if User.objects.exclude(id=user.id).filter(email=email).exists():
-        return JsonResponse({'message': 'email already exists'})
+        return JsonResponse({"message": "email already exists"})
 
     else:
         form = ProfileForm(request.POST, request.FILES, instance=user)
@@ -101,10 +129,10 @@ def edit_profile(request):
             form.save()
 
         serializer_data = UserSerializer(user).data
-        return JsonResponse({'message': 'success', 'user': serializer_data})
+        return JsonResponse({"message": "success", "user": serializer_data})
 
 
-@api_view(['POST'])
+@api_view(["POST"])
 def edit_password(request):
     form = PasswordChangeForm(data=request.POST, user=request.user)
 
@@ -118,31 +146,35 @@ def edit_password(request):
         return JsonResponse({"message": form.errors.as_json()}, safe=False)
 
 
-@api_view(['POST'])
+@api_view(["POST"])
 @permission_classes([])
 @authentication_classes([])
 def signup(request):
     data = request.data
-    message = 'success'
+    message = "success"
 
-    form = SignupForm({
-        'name': data.get('name'),
-        'email': data.get('email'),
-        'password1': data.get('password1'),
-        'password2': data.get('password2'),
-    })
+    form = SignupForm(
+        {
+            "name": data.get("name"),
+            "email": data.get("email"),
+            "password1": data.get("password1"),
+            "password2": data.get("password2"),
+        }
+    )
 
     if form.is_valid():
         user = form.save()
         user.is_active = False
         user.save()
 
-        url = f"http://localhost:8000/api/activateemail/?email={user.email}&id={user.id}"
+        url = (
+            f"http://localhost:8000/api/activateemail/?email={user.email}&id={user.id}"
+        )
 
         send_mail(
             "Verify your account",
             f"To verify your account click on the following url: {url}",
-            'noreply@example.com',
+            "noreply@example.com",
             [user.email],
             fail_silently=False,
         )
@@ -150,12 +182,12 @@ def signup(request):
     else:
         message = form.errors.as_json()
 
-    return JsonResponse({'message': message}, safe=False)
+    return JsonResponse({"message": message}, safe=False)
 
 
 def activate_email(request):
-    id = request.GET.get('id', '')
-    email = request.GET.get('email', '')
+    id = request.GET.get("id", "")
+    email = request.GET.get("email", "")
 
     if id and email:
         user = User.objects.get(id=id, email=email)

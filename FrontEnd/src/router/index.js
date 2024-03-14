@@ -65,6 +65,11 @@ const router = createRouter({
       component: () => import('../views/TrendView.vue')
     },
     {
+      path: '/notifications',
+      name: 'notifications',
+      component: () => import('../views/NotificationView.vue')
+    },
+    {
       path: '/about',
       name: 'about',
       // route level code-splitting

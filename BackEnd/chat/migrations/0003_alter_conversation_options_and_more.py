@@ -6,16 +6,16 @@ from django.db import migrations
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('chat', '0002_alter_conversation_id_alter_conversationmessage_id'),
+        ("chat", "0002_alter_conversation_id_alter_conversationmessage_id"),
     ]
 
     operations = [
         migrations.AlterModelOptions(
-            name='conversation',
-            options={'ordering': ['-modified_at']},
+            name="conversation",
+            options={"ordering": ["-modified_at"]},
         ),
         migrations.AlterModelOptions(
-            name='conversationmessage',
-            options={'ordering': ['-created_at']},
+            name="conversationmessage",
+            options={"ordering": ["-created_at"]},
         ),
     ]
