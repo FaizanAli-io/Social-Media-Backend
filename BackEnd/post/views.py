@@ -2,7 +2,7 @@ from django.http import JsonResponse
 
 from rest_framework.decorators import api_view
 
-from account.models import User
+from account.models import User, FriendRequest
 from account.serializers import UserSerializer
 
 from trends.scripts import add_hashtags
@@ -49,8 +49,21 @@ def post_list_profile(request, id):
     posts = Post.objects.filter(created_by=user)
     post_serializer = PostSerializer(posts, many=True)
 
+    can_request = True
+
+    check1 = FriendRequest.objects.filter(
+        created_for=request.user, created_by=user
+    ).exists()
+    check2 = FriendRequest.objects.filter(
+        created_for=user, created_by=request.user
+    ).exists()
+
+    if check1 or check2:
+        can_request = False
+
     return JsonResponse(
         {
+            "can_request": can_request,
             "user": user_serializer.data,
             "posts": post_serializer.data,
         },

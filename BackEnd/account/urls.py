@@ -15,6 +15,7 @@ urlpatterns = [
     path("refresh/", TokenRefreshView.as_view(), name="token-refresh"),
     path("signin/", TokenObtainPairView.as_view(), name="token-obtain"),
     path("activateemail/", views.activate_email, name="activate-email"),
+    path("friends/suggest/", views.friend_suggestions, name="friend-suggestions"),
     path("friends/<uuid:pk>/", views.friends, name="friends"),
     path(
         "friends/<uuid:pk>/request/",

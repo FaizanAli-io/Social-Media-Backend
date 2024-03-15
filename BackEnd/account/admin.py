@@ -14,7 +14,14 @@ class CustomUserAdmin(UserAdmin):
         (_("Personal Info"), {"fields": ("name", "avatar")}),
         (
             _("Social Information"),
-            {"fields": ("post_count", "friend_count", "friends")},
+            {
+                "fields": (
+                    "friends",
+                    "post_count",
+                    "friend_count",
+                    "people_you_may_know",
+                )
+            },
         ),
         (_("Permissions"), {"fields": ("is_active", "is_staff", "is_superuser")}),
         (_("Important Dates"), {"fields": ("date_joined", "last_login")}),

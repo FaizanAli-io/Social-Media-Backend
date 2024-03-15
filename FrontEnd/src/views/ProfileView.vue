@@ -18,7 +18,7 @@
                 </div>
 
                 <div class="mt-6">
-                    <button v-if="userStore.user.id !== user.id" @click="sendFriendRequest"
+                    <button v-if="userStore.user.id !== user.id && canRequest" @click="sendFriendRequest"
                         class="inline-block py-2 px-3 bg-purple-600 text-white rounded-lg">
                         Friend Request
                     </button>
@@ -122,6 +122,7 @@ export default {
     data() {
         return {
             user: { id: null },
+            canRequest: null,
             posts: [],
             url: null,
             body: '',
@@ -155,6 +156,7 @@ export default {
                 .then(response => {
                     this.user = response.data.user
                     this.posts = response.data.posts
+                    this.canRequest = response.data.can_request
                     console.log('Data: ', response.data)
                 })
                 .catch(error => {

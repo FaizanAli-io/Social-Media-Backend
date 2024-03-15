@@ -27,13 +27,9 @@ from notification.utils import create_notification
 
 @api_view(["GET"])
 def friends(request, pk):
-
     user = User.objects.get(pk=pk)
-
-    print(request.user.name)
-    print(user.name)
-
     friends = user.friends.all()
+
     requests = (
         FriendRequest.objects.filter(
             created_for=request.user,
@@ -53,11 +49,23 @@ def friends(request, pk):
     )
 
 
+@api_view(["GET"])
+def friend_suggestions(request):
+    suggestions = request.user.people_you_may_know.all()
+    serializer = UserSerializer(suggestions, many=True)
+    return JsonResponse(serializer.data, safe=False)
+
+
 @api_view(["POST"])
 def send_friend_request(request, pk):
     user = User.objects.get(pk=pk)
-    check1 = FriendRequest.objects.filter(created_for=request.user, created_by=user)
-    check2 = FriendRequest.objects.filter(created_for=user, created_by=request.user)
+
+    check1 = FriendRequest.objects.filter(
+        created_for=request.user, created_by=user
+    ).exists()
+    check2 = FriendRequest.objects.filter(
+        created_for=user, created_by=request.user
+    ).exists()
 
     if not (check1 or check2):
         friend_request = FriendRequest.objects.create(

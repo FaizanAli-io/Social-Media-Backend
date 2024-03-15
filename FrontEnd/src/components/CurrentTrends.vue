@@ -28,26 +28,22 @@
 </template>
 
 <script>
+
 import axios from 'axios';
 import { RouterLink } from 'vue-router';
 
-
 export default {
-    name: 'CurrentTrends',
-    data() {
-        return {
-            trends: [],
-        };
-    },
-    mounted() {
-        this.getTrends();
-    },
+
+    data() { return { trends: [] } },
+
+    mounted() { this.getTrends() },
+
     methods: {
         getTrends() {
             axios
                 .get('api/posts/trends/')
                 .then(response => {
-                    console.log("Response:", response.data);
+                    console.log("Trends:", response.data);
                     this.trends = response.data;
                 })
                 .catch(error => {
@@ -55,6 +51,7 @@ export default {
                 });
         }
     },
+
     components: { RouterLink }
 }
 
