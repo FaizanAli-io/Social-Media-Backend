@@ -48,22 +48,7 @@
 
             <!-- Make a post section -->
             <div class="bg-white border border-gray-200 rounded-lg" v-if="userStore.user.id === user.id">
-                <form method="post" v-on:submit.prevent="submitForm">
-                    <div class="p-4">
-                        <textarea v-model="body" class="p-4 w-full bg-gray-100 rounded-lg"
-                            placeholder="What are you thinking about?"></textarea>
-
-                        <div id="preview" v-if="url"><img :src="url" class="w-[100px] rounded-xl mt-3"></div>
-                    </div>
-
-                    <div class="p-4 border-t border-gray-100 flex justify-between">
-                        <label class="inline-block py-4 px-6 bg-gray-600 text-white rounded-lg">
-                            <input type="file" ref="file" @change="onFileChange"> Attach image
-                        </label>
-
-                        <button class="inline-block py-4 px-6 bg-purple-600 text-white rounded-lg">Post</button>
-                    </div>
-                </form>
+                <FeedForm v-bind:user="user" v-bind:posts="posts" />
             </div>
 
             <!-- Text Post section -->
@@ -75,11 +60,8 @@
 
         <!-- Right side of the Feed -->
         <div class="main-right col-span-1 space-y-4">
-
             <PeopleYouMayKnow />
-
             <CurrentTrends />
-
         </div>
 
     </div>
@@ -98,19 +80,22 @@ import axios from 'axios'
 import { useUserStore } from '@/stores/user'
 import { useToastStore } from '@/stores/toast'
 
-import PeopleYouMayKnow from '@/components/PeopleYouMayKnow.vue'
-import CurrentTrends from '@/components/CurrentTrends.vue'
+import FeedForm from '@/components/FeedForm.vue'
 import FeedItem from '@/components/FeedItem.vue'
+import CurrentTrends from '@/components/CurrentTrends.vue'
+import PeopleYouMayKnow from '@/components/PeopleYouMayKnow.vue'
+
 import { RouterLink } from 'vue-router'
 
 export default {
     name: 'ProfileView',
 
     components: {
-        PeopleYouMayKnow,
-        CurrentTrends,
-        RouterLink,
+        FeedForm,
         FeedItem,
+        RouterLink,
+        CurrentTrends,
+        PeopleYouMayKnow,
     },
 
     setup() {
@@ -121,12 +106,9 @@ export default {
 
     data() {
         return {
-            user: { id: null },
-            canRequest: null,
             posts: [],
-            url: null,
-            body: '',
-
+            canRequest: null,
+            user: { id: null },
         }
     },
 
@@ -145,11 +127,6 @@ export default {
     },
 
     methods: {
-        onFileChange(e) {
-            const file = e.target.files[0]
-            this.url = URL.createObjectURL(file)
-        },
-
         getFeed() {
             axios
                 .get(`api/posts/profile/${this.$route.params.id}`)
@@ -158,32 +135,6 @@ export default {
                     this.posts = response.data.posts
                     this.canRequest = response.data.can_request
                     console.log('Data: ', response.data)
-                })
-                .catch(error => {
-                    console.log('Error: ', error)
-                })
-        },
-
-        submitForm() {
-            console.log('Submit Form:', this.body)
-
-            let formData = new FormData()
-            formData.append('body', this.body)
-            formData.append('image', this.$refs.file.files[0])
-
-            axios
-                .post('api/posts/create/', formData, {
-                    'headers': {
-                        'Content-Type': 'multipart/form-data',
-                    }
-                })
-                .then(response => {
-                    console.log('Data: ', response.data)
-                    this.posts.unshift(response.data)
-                    this.$refs.file.value = null
-                    this.user.post_count += 1
-                    this.url = null
-                    this.body = ''
                 })
                 .catch(error => {
                     console.log('Error: ', error)

@@ -62,6 +62,7 @@ class Post(models.Model):
 
     # Attributes
     body = models.TextField(blank=True, null=True)
+    is_private = models.BooleanField(default=False)
     attachments = models.ManyToManyField(PostAttachment, blank=True)
     created_by = models.ForeignKey(User, related_name="posts", on_delete=models.CASCADE)
 
@@ -70,9 +71,8 @@ class Post(models.Model):
 
     # Likes and Comments
     like_count = models.IntegerField(default=0)
-    likes = models.ManyToManyField(Like, blank=True)
-
     comment_count = models.IntegerField(default=0)
+    likes = models.ManyToManyField(Like, blank=True)
     comments = models.ManyToManyField(Comment, blank=True)
 
     class Meta:

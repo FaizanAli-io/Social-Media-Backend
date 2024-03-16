@@ -3,7 +3,7 @@ from django.urls import path, include
 from . import views
 
 urlpatterns = [
-    path("", views.post_list, name="post-list"),
+    path("", views.post_list_feed, name="post-list-feed"),
     path("create/", views.post_create, name="post-create"),
     path("<uuid:id>", views.post_detail, name="post-detail"),
     path("<uuid:id>/like/", views.post_like, name="post-like"),

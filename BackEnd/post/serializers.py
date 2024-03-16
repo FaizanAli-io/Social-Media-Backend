@@ -30,10 +30,11 @@ class PostSerializer(ModelSerializer):
         fields = [
             "id",
             "body",
+            "is_private",
+            "attachments",
             "like_count",
-            "comment_count",
             "comments",
+            "comment_count",
             "created_by",
             "created_at_formatted",
-            "attachments",
         ]
