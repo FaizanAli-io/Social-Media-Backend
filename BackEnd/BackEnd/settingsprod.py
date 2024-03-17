@@ -27,9 +27,9 @@ SECRET_KEY = "django-insecure-j_x$ye5g-#yz=)psrw2c44bw5e$f8j6ww9ed+8=k7pdii4h@_3
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ["api.wey.com"]
 
-WEBSITE_URL = "http://api.wey.com"
+WEBSITE_URL = "http://127.0.0.1:8000/"
 
 # Application definition
 
@@ -155,11 +155,11 @@ REST_FRAMEWORK = {
 }
 
 CORS_ALLOWED_ORIGINS = [
-    "http://localhost:5173",
+    "http://wey.com",
 ]
 
 CSRF_TRUSTED_ORIGINS = [
-    "http://localhost:5173",
+    "http://wey.com",
 ]
 
 AUTH_USER_MODEL = "account.User"

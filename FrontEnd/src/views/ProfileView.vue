@@ -48,12 +48,12 @@
 
             <!-- Make a post section -->
             <div class="bg-white border border-gray-200 rounded-lg" v-if="userStore.user.id === user.id">
-                <FeedForm v-bind:user="user" v-bind:posts="posts" />
+                <FeedForm v-bind:user="user" v-bind:posts="posts" v-on:postCreated="postCreated" />
             </div>
 
             <!-- Text Post section -->
             <div class="p-4 bg-white border border-gray-200 rounded-lg" v-for="post in posts" v-bind:key="post.id">
-                <FeedItem v-bind:post="post" />
+                <FeedItem v-bind:post="post" v-on:deletePost="deletePost" />
             </div>
 
         </div>
@@ -169,11 +169,20 @@ export default {
                 })
         },
 
+        postCreated(post) {
+            this.posts.unshift(post)
+            this.user.post_count += 1
+        },
+
+        deletePost(id) {
+            this.posts = this.posts.filter(post => post.id != id)
+        },
+
         signout() {
             console.log("Logging out")
             this.userStore.removeToken()
             this.$router.push('/signin')
-        }
+        },
     }
 }
 

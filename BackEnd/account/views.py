@@ -1,8 +1,10 @@
+from django.conf import settings
+
+from django.core.mail import send_mail
+
 from django.http import JsonResponse, HttpResponse
 
 from django.contrib.auth.forms import PasswordChangeForm
-
-from django.core.mail import send_mail
 
 from rest_framework.decorators import (
     authentication_classes,
@@ -176,7 +178,7 @@ def signup(request):
         user.save()
 
         url = (
-            f"http://localhost:8000/api/activateemail/?email={user.email}&id={user.id}"
+            f"{settings.WEBSITE_URL}api/activateemail/?email={user.email}&id={user.id}"
         )
 
         send_mail(

@@ -2,6 +2,8 @@ import uuid
 
 from django.db import models
 
+from django.conf import settings
+
 from django.utils.timesince import timesince
 
 from account.models import User
@@ -52,7 +54,7 @@ class PostAttachment(models.Model):
     )
 
     def image_url(self):
-        return "http://127.0.0.1:8000" + self.image.url if self.image else ""
+        return settings.WEBSITE_URL + self.image.url if self.image else ""
 
 
 class Post(models.Model):
@@ -63,6 +65,7 @@ class Post(models.Model):
     # Attributes
     body = models.TextField(blank=True, null=True)
     is_private = models.BooleanField(default=False)
+    reported_by = models.ManyToManyField(User, blank=True)
     attachments = models.ManyToManyField(PostAttachment, blank=True)
     created_by = models.ForeignKey(User, related_name="posts", on_delete=models.CASCADE)
 

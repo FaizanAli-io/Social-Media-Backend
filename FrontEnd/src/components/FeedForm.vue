@@ -28,6 +28,8 @@ import axios from 'axios'
 export default {
     name: 'FeedForm',
 
+    emits: ['postCreated'],
+
     props: {
         user: Object,
         posts: Array
@@ -68,11 +70,8 @@ export default {
                     this.url = null
                     this.isPrivate = false
                     this.$refs.file.value = null
-                    this.posts.unshift(response.data)
 
-                    if (this.user != null) {
-                        this.user.post_count += 1
-                    }
+                    this.$emit('postCreated', response.data)
                 })
                 .catch(error => {
                     console.log('Error: ', error)

@@ -6,12 +6,12 @@
 
             <!-- Make a post section -->
             <div class="bg-white border border-gray-200 rounded-lg">
-                <FeedForm v-bind:user="null" v-bind:posts="posts" />
+                <FeedForm v-bind:user="null" v-bind:posts="posts" v-on:postCreated="postCreated" />
             </div>
 
             <!-- Text Post section -->
             <div v-for="post in posts" v-bind:key="post.id" class="p-4 bg-white border border-gray-200 rounded-lg">
-                <FeedItem v-bind:post="post" />
+                <FeedItem v-bind:post="post" v-on:deletePost="deletePost" />
             </div>
 
         </div>
@@ -66,6 +66,14 @@ export default {
                 .catch(error => {
                     console.log('Error: ', error)
                 })
+        },
+
+        postCreated(post) {
+            this.posts.unshift(post)
+        },
+
+        deletePost(id) {
+            this.posts = this.posts.filter(post => post.id != id)
         },
     }
 }

@@ -2,6 +2,8 @@ import uuid
 
 from django.db import models
 
+from django.conf import settings
+
 from django.utils import timezone
 
 from django.contrib.auth.models import (
@@ -66,7 +68,7 @@ class User(AbstractBaseUser, PermissionsMixin):
 
     def avatar_url(self):
         return (
-            "http://127.0.0.1:8000" + self.avatar.url
+            settings.WEBSITE_URL + self.avatar.url
             if self.avatar
             else "https://placehold.co/300"
         )

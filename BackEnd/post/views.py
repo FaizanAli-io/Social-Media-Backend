@@ -21,7 +21,7 @@ from .forms import PostForm, AttachmentForm
 
 @api_view(["GET"])
 def post_list_feed(request):
-    valid_ids = [request.user.id] + [user.id for user in request.user.friends.all()]
+    valid_ids = [request.user.pk] + [user.pk for user in request.user.friends.all()]
     posts = Post.objects.filter(created_by_id__in=valid_ids)
 
     trend = request.GET.get("trend", "")
@@ -33,21 +33,21 @@ def post_list_feed(request):
 
 
 @api_view(["GET"])
-def post_detail(request, id):
-    valid_ids = [request.user.id] + [user.id for user in request.user.friends.all()]
+def post_detail(request, pk):
+    valid_ids = [request.user.pk] + [user.pk for user in request.user.friends.all()]
     post = Post.objects.filter(
         Q(created_by_id__in=valid_ids) | Q(is_private=False)
-    ).get(pk=id)
+    ).get(pk=pk)
 
     serializer = PostSerializer(post)
     return JsonResponse(serializer.data, safe=False)
 
 
 @api_view(["GET"])
-def post_list_profile(request, id):
-    user = User.objects.get(pk=id)
+def post_list_profile(request, pk):
+    user = User.objects.get(pk=pk)
     posts = Post.objects.filter(created_by=user)
-    if request.user.id != user.id:
+    if request.user.pk != user.pk:
         if request.user not in user.friends.all():
             posts = posts.filter(is_private=False)
 
@@ -110,8 +110,8 @@ def post_create(request):
 
 
 @api_view(["POST"])
-def post_like(request, id):
-    post = Post.objects.get(id=id)
+def post_like(request, pk):
+    post = Post.objects.get(pk=pk)
 
     if not post.likes.filter(created_by=request.user):
         like = Like.objects.create(created_by=request.user)
@@ -119,7 +119,7 @@ def post_like(request, id):
         post.likes.add(like)
         post.save()
 
-        create_notification(request, "postlike", post_id=post.id)
+        create_notification(request, "postlike", post_id=post.pk)
 
         message = "like created"
     else:
@@ -129,17 +129,43 @@ def post_like(request, id):
 
 
 @api_view(["POST"])
-def post_comment(request, id):
+def post_comment(request, pk):
     comment = Comment.objects.create(
         body=request.data.get("body"),
         created_by=request.user,
     )
 
-    post = Post.objects.get(id=id)
+    post = Post.objects.get(pk=pk)
     post.comments.add(comment)
     post.comment_count += 1
     post.save()
 
-    create_notification(request, "postcomment", post_id=post.id)
+    create_notification(request, "postcomment", post_id=post.pk)
 
     return JsonResponse(CommentSerializer(comment).data, safe=False)
+
+
+@api_view(["POST"])
+def post_report(request, pk):
+    post = Post.objects.get(pk=pk)
+    post.reported_by.add(request.user)
+    post.save()
+
+    return JsonResponse({"message": "Post reported successfully."})
+
+
+@api_view(["DELETE"])
+def post_delete(request, pk):
+    post = Post.objects.get(pk=pk)
+
+    if post.created_by.pk != request.user.pk:
+        message = "You cannot delete someone elses post."
+        status = "failure"
+
+    else:
+        message = "Post deleted successfully."
+        request.user.post_count -= 1
+        post.delete()
+        status = "success"
+
+    return JsonResponse({"status": status, "message": message})
