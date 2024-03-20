@@ -1,10 +1,10 @@
 from django.http import JsonResponse
 
+from core.models import Notification
+
 from rest_framework.decorators import api_view
 
 from .serializers import NotificationSerializer
-
-from .models import Notification
 
 
 @api_view(["GET"])

@@ -1,8 +1,8 @@
-from rest_framework.serializers import ModelSerializer
-
 from account.serializers import UserSerializer
 
-from .models import Post, Comment, PostAttachment
+from rest_framework.serializers import ModelSerializer
+
+from core.models import Post, Comment, PostAttachment, Hashtag
 
 
 class PostAttachmentSerializer(ModelSerializer):
@@ -38,3 +38,10 @@ class PostSerializer(ModelSerializer):
             "created_by",
             "created_at_formatted",
         ]
+
+
+class HashtagSerializer(ModelSerializer):
+
+    class Meta:
+        model = Hashtag
+        fields = ["id", "content", "occurrence", "modified_at"]

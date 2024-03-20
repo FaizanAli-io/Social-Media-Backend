@@ -2,12 +2,7 @@ from django.http import JsonResponse
 
 from rest_framework.decorators import api_view
 
-from account.models import User
-
-from .models import (
-    Conversation,
-    ConversationMessage,
-)
+from core.models import User, Conversation, ConversationMessage
 
 from .serializers import (
     ConversationSerializer,

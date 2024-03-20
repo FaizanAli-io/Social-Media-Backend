@@ -1,13 +1,10 @@
 from django.db.models import Q
 from django.http import JsonResponse
-
 from rest_framework.decorators import api_view
 
-from account.models import User
-from account.serializers import UserSerializer
-
-from post.models import Post
+from core.models import User, Post
 from post.serializers import PostSerializer
+from account.serializers import UserSerializer
 
 
 @api_view(["POST"])

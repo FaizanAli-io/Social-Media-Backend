@@ -1,4 +1,4 @@
-from django.urls import path, include
+from django.urls import path
 
 from . import views
 
@@ -11,5 +11,5 @@ urlpatterns = [
     path("<uuid:pk>/delete/", views.post_delete, name="post-delete"),
     path("<uuid:pk>/comment/", views.post_comment, name="post-comment"),
     path("profile/<uuid:pk>/", views.post_list_profile, name="post-profile"),
-    path("trends/", include("trends.urls")),
+    path("trends/", views.get_trending, name="get-trending"),
 ]

@@ -41,13 +41,7 @@ INSTALLED_APPS = [
     "django.contrib.messages",
     "django.contrib.staticfiles",
     # Custom
-    "post",
-    "chat",
-    "trends",
-    "search",
-    "account",
-    "notification",
-    # Rest Framework
+    "core",
     "corsheaders",
     "rest_framework",
     "rest_framework_simplejwt",
@@ -162,6 +156,6 @@ CSRF_TRUSTED_ORIGINS = [
     "http://wey.com",
 ]
 
-AUTH_USER_MODEL = "account.User"
+AUTH_USER_MODEL = "core.User"
 
 EMAIL_BACKEND = "django.core.mail.backends.console.EmailBackend"

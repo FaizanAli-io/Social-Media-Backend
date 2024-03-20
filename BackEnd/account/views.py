@@ -6,6 +6,8 @@ from django.http import JsonResponse, HttpResponse
 
 from django.contrib.auth.forms import PasswordChangeForm
 
+from core.models import User, FriendRequest
+
 from rest_framework.decorators import (
     authentication_classes,
     permission_classes,
@@ -14,15 +16,7 @@ from rest_framework.decorators import (
 
 from .forms import SignupForm, ProfileForm
 
-from .models import (
-    User,
-    FriendRequest,
-)
-
-from .serializers import (
-    UserSerializer,
-    FriendRequestSerializer,
-)
+from .serializers import UserSerializer, FriendRequestSerializer
 
 from notification.utils import create_notification
 

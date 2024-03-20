@@ -1,8 +1,4 @@
-from .models import Notification
-
-from post.models import Post
-
-from account.models import FriendRequest
+from core.models import Post, Notification, FriendRequest
 
 
 def create_notification(

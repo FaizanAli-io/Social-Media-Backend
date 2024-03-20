@@ -1,22 +1,13 @@
 from django.db.models import Q
 from django.http import JsonResponse
-
 from rest_framework.decorators import api_view
 
-from account.models import User, FriendRequest
 from account.serializers import UserSerializer
-
-from trends.scripts import add_hashtags
 from notification.utils import create_notification
-
-from .models import Post, Like, Comment
-
-from .serializers import (
-    PostSerializer,
-    CommentSerializer,
-)
+from core.models import User, FriendRequest, Post, Like, Comment, Hashtag
 
 from .forms import PostForm, AttachmentForm
+from .serializers import PostSerializer, CommentSerializer, HashtagSerializer
 
 
 @api_view(["GET"])
@@ -100,9 +91,6 @@ def post_create(request):
         request.user.post_count += 1
         request.user.save()
 
-        if not post.is_private:
-            add_hashtags(post.body)
-
         return JsonResponse(PostSerializer(post).data, safe=False)
 
     else:
@@ -169,3 +157,11 @@ def post_delete(request, pk):
         status = "success"
 
     return JsonResponse({"status": status, "message": message})
+
+
+@api_view(["GET"])
+def get_trending(request):
+    objects = Hashtag.objects.filter()[:10]
+    serializer = HashtagSerializer(objects, many=True)
+
+    return JsonResponse(serializer.data, safe=False)

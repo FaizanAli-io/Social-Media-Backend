@@ -40,5 +40,20 @@ class CustomUserAdmin(UserAdmin):
     readonly_fields = ["date_joined", "last_login"]
 
 
+# User related
 admin.site.register(models.User, CustomUserAdmin)
 admin.site.register(models.FriendRequest)
+
+# Post related
+admin.site.register(models.Post)
+admin.site.register(models.Like)
+admin.site.register(models.Comment)
+admin.site.register(models.PostAttachment)
+admin.site.register(models.Hashtag)
+
+# Chat related
+admin.site.register(models.Conversation)
+admin.site.register(models.ConversationMessage)
+
+# Notifications
+admin.site.register(models.Notification)
