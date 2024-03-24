@@ -53,7 +53,7 @@ admin.site.register(models.Hashtag)
 
 # Chat related
 admin.site.register(models.Conversation)
-admin.site.register(models.ConversationMessage)
+admin.site.register(models.Message)
 
 # Notifications
 admin.site.register(models.Notification)

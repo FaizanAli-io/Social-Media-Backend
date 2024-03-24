@@ -13,8 +13,8 @@
                         <div class="flex items-center space-x-2">
 
                             <div v-for="user in convo.users" v-bind:key="user.id">
-                                <img :src="user.avatar_url" class="w-[40px] rounded-full">
                                 <p v-if="user.id !== userStore.user.id" class="text-xs font-bold">
+                                    <img :src="user.avatar_url" class="w-[40px] rounded-full">
                                     {{ user.name }}
                                 </p>
                             </div>
@@ -30,10 +30,10 @@
         </div>
 
         <!-- Right side of the Screen -->
-        <div class="main-center col-span-3 space-y-4">
+        <div v-if="activeConvo.id != null" class="main-center col-span-3 space-y-4">
 
             <!-- Chat display section -->
-            <div class="bg-white border border-gray-200 rounded-lg ">
+            <div v-if="activeConvo.messages.length" class="bg-white border border-gray-200 rounded-lg">
                 <div class="flex flex-col flex-grow p-4">
 
                     <template v-for="message in activeConvo.messages" v-bind:key="message.id">
@@ -86,6 +86,13 @@
 
         </div>
 
+        <div v-else class="main-center col-span-3 space-y-4">
+            <div class="p-12 bg-white border border-grey-200 rounded-lg">
+                <h1 class="mb-6 text-2xl"> No conversation selected </h1>
+                <p class="mb-6 text-grey-500"> Select a conversation first. </p>
+            </div>
+        </div>
+
     </div>
 </template>
 
@@ -105,8 +112,8 @@ export default {
 
     data() {
         return {
+            activeConvo: { id: null },
             conversations: [],
-            activeConvo: {},
             body: '',
         }
     },
@@ -117,31 +124,11 @@ export default {
 
     methods: {
         getConversations() {
-            console.log("Getting Conversations")
-
             axios
                 .get('api/chat/')
                 .then(response => {
                     console.log('Data: ', response.data)
                     this.conversations = response.data
-                    if (this.conversations.length > 0) {
-                        this.activeConvo = this.conversations[0]
-                        this.getMessages()
-                    }
-                })
-                .catch(error => {
-                    console.log('Error: ', error)
-                })
-        },
-
-        getMessages() {
-            console.log("Getting Messages")
-
-            axios
-                .get(`api/chat/${this.activeConvo.id}/`)
-                .then(response => {
-                    console.log('Data: ', response.data)
-                    this.activeConvo = response.data
                 })
                 .catch(error => {
                     console.log('Error: ', error)
@@ -149,10 +136,11 @@ export default {
         },
 
         sendMessage() {
-            console.log("Sending Message", this.body)
-
             axios
-                .post(`api/chat/${this.activeConvo.id}/send/`, { body: this.body })
+                .post(`api/chat/send/`, {
+                    body: this.body,
+                    id: this.activeConvo.id,
+                })
                 .then(response => {
                     console.log('Data: ', response.data)
                     this.activeConvo.messages.push(response.data)
@@ -163,10 +151,7 @@ export default {
                 })
         },
 
-        setActiveConvo(id) {
-            this.activeConvo.id = id
-            this.getMessages()
-        }
+        setActiveConvo(id) { this.activeConvo = this.conversations.find(c => c.id === id) },
     }
 }
 

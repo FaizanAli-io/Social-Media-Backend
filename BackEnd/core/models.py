@@ -117,6 +117,9 @@ class FriendRequest(BaseModel):
     # Dates
     created_at = models.DateTimeField(auto_now_add=True)
 
+    def __str__(self) -> str:
+        return f"{self.status}: {self.created_by.name} -> {self.created_for.name}"
+
 
 # Post related
 
@@ -219,8 +222,11 @@ class Conversation(BaseModel):
     def modified_at_formatted(self):
         return timesince(self.modified_at)
 
+    def __str__(self) -> str:
+        return ", ".join([user.name for user in self.users.all()])
 
-class ConversationMessage(BaseModel):
+
+class Message(BaseModel):
 
     # Attributes
     conversation = models.ForeignKey(
@@ -242,6 +248,9 @@ class ConversationMessage(BaseModel):
 
     def created_at_formatted(self):
         return timesince(self.created_at)
+
+    def __str__(self) -> str:
+        return f"{self.body} - {self.sent_by.name} -> {self.sent_to.name}"
 
 
 # Notifications
@@ -287,5 +296,5 @@ class Notification(BaseModel):
         {self.notification_type}: 
         {self.created_by.name} -> 
         {self.created_for.name} 
-        {"Read" if self.is_read else "Unread"}
+        ({"Read" if self.is_read else "Unread"})
         """

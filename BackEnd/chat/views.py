@@ -1,70 +1,61 @@
-from django.http import JsonResponse
+from rest_framework import generics
+from rest_framework.response import Response
 
-from rest_framework.decorators import api_view
-
-from core.models import User, Conversation, ConversationMessage
-
-from .serializers import (
-    ConversationSerializer,
-    ConversationMessageSerializer,
-    ConversationDetailSerializer,
-)
+from core.models import User, Conversation, Message
+from .serializers import ConversationSerializer, MessageSerializer
 
 
-@api_view(["GET"])
-def conversation_list(request):
-    conversations = Conversation.objects.filter(users__in=[request.user])
-    serializer = ConversationSerializer(conversations, many=True)
-    return JsonResponse(serializer.data, safe=False)
+class ListCreateConversationAPIView(generics.ListCreateAPIView):
+
+    queryset = Conversation.objects.all()
+    serializer_class = ConversationSerializer
+
+    def get_queryset(self, user):
+        return Conversation.objects.filter(users__in=[user])
+
+    def list(self, request):
+        queryset = self.queryset.filter(users__in=[request.user])
+        serializer = self.get_serializer(queryset, many=True)
+        return Response(serializer.data)
+
+    def create(self, request):
+        receiver = User.objects.get(id=request.data["id"])
+        conversation = Conversation.objects.filter(
+            users__in=[request.user],
+        ).filter(
+            users__in=[receiver],
+        )
+
+        if conversation.exists():
+            conversation = conversation.first()
+            created = False
+
+        else:
+            conversation = Conversation.objects.create()
+            conversation.users.add(request.user, receiver)
+            conversation.save()
+            created = True
+
+        serializer = self.serializer_class(conversation)
+        return Response({"conversation": serializer.data, "created": created})
 
 
-@api_view(["GET"])
-def start_convo(request, pk):
-    receiver = User.objects.get(pk=pk)
-    conversations = Conversation.objects.filter(users__in=[request.user]).filter(
-        users__in=[receiver]
-    )
+class SendMessageAPIView(generics.CreateAPIView):
 
-    if conversations.exists():
-        conversation = conversations.first()
-        created = False
-    else:
-        conversation = Conversation.objects.create()
-        conversation.users.add(receiver, request.user)
-        conversation.save()
-        created = True
+    serializer_class = MessageSerializer
 
-    serializer = ConversationDetailSerializer(conversation)
+    def create(self, request):
+        conversation = Conversation.objects.get(id=request.data["id"])
+        for user in conversation.users.all():
+            if user.id != request.user.id:
+                receiver = user
 
-    return JsonResponse(
-        {
-            "conversation": serializer.data,
-            "created": created,
-        }
-    )
+        message = Message.objects.create(
+            conversation=conversation,
+            body=request.data["body"],
+            sent_by=request.user,
+            sent_to=receiver,
+        )
 
-
-@api_view(["POST"])
-def send_message(request, pk):
-    conversation = Conversation.objects.filter(users__in=[request.user]).get(pk=pk)
-
-    for user in conversation.users.all():
-        if user.id != request.user.id:
-            receiver = user
-
-    message = ConversationMessage.objects.create(
-        conversation=conversation,
-        body=request.data["body"],
-        sent_by=request.user,
-        sent_to=receiver,
-    )
-
-    serializer = ConversationMessageSerializer(message)
-    return JsonResponse(serializer.data, safe=False)
-
-
-@api_view(["GET"])
-def conversation_detail(request, pk):
-    conversation = Conversation.objects.filter(users__in=[request.user]).get(pk=pk)
-    serializer = ConversationDetailSerializer(conversation)
-    return JsonResponse(serializer.data, safe=False)
+        serializer = self.serializer_class(message)
+        return Response(serializer.data)

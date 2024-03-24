@@ -1,32 +1,23 @@
 from rest_framework import serializers
 
+from core.models import Conversation, Message
 from account.serializers import UserSerializer
 
-from core.models import Conversation, ConversationMessage
 
-
-class ConversationSerializer(serializers.ModelSerializer):
-
-    users = UserSerializer(read_only=True, many=True)
-
-    class Meta:
-        model = Conversation
-        fields = ["id", "users", "modified_at_formatted"]
-
-
-class ConversationMessageSerializer(serializers.ModelSerializer):
+class MessageSerializer(serializers.ModelSerializer):
 
     sent_by = UserSerializer(read_only=True)
     sent_to = UserSerializer(read_only=True)
 
     class Meta:
-        model = ConversationMessage
+        model = Message
         fields = ["id", "body", "sent_by", "sent_to", "created_at_formatted"]
 
 
-class ConversationDetailSerializer(serializers.ModelSerializer):
+class ConversationSerializer(serializers.ModelSerializer):
 
-    messages = ConversationMessageSerializer(read_only=True, many=True)
+    users = UserSerializer(read_only=True, many=True)
+    messages = MessageSerializer(read_only=True, many=True)
 
     class Meta:
         model = Conversation

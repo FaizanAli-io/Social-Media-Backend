@@ -159,7 +159,7 @@ export default {
 
         sendMessage() {
             axios
-                .get(`api/chat/${this.$route.params.id}/start/`)
+                .post('api/chat/', { id: this.$route.params.id })
                 .then(response => {
                     console.log('Data: ', response.data)
                     this.$router.push('/chat')
