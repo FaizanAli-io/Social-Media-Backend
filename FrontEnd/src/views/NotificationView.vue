@@ -47,7 +47,7 @@ export default {
             console.log(notif.id)
 
             axios
-                .post(`api/notification/read/${notif.id}`)
+                .post(`api/notification/${notif.id}`)
                 .then(response => {
                     console.log('Data: ', response.data)
 

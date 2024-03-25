@@ -10,8 +10,24 @@ class CustomUserAdmin(UserAdmin):
     list_display = ["email", "name"]
 
     fieldsets = (
-        (_("Credentials"), {"fields": ("email", "password")}),
-        (_("Personal Info"), {"fields": ("name", "avatar")}),
+        (
+            _("Credentials"),
+            {
+                "fields": (
+                    "email",
+                    "password",
+                )
+            },
+        ),
+        (
+            _("Personal Information"),
+            {
+                "fields": (
+                    "name",
+                    "avatar",
+                )
+            },
+        ),
         (
             _("Social Information"),
             {
@@ -23,8 +39,25 @@ class CustomUserAdmin(UserAdmin):
                 )
             },
         ),
-        (_("Permissions"), {"fields": ("is_active", "is_staff", "is_superuser")}),
-        (_("Important Dates"), {"fields": ("date_joined", "last_login")}),
+        (
+            _("Permissions"),
+            {
+                "fields": (
+                    "is_active",
+                    "is_staff",
+                    "is_superuser",
+                )
+            },
+        ),
+        (
+            _("Important Dates"),
+            {
+                "fields": (
+                    "created_at",
+                    "last_login",
+                )
+            },
+        ),
     )
 
     add_fieldsets = (
@@ -32,12 +65,17 @@ class CustomUserAdmin(UserAdmin):
             None,
             {
                 "classes": ("wide",),
-                "fields": ("name", "email", "password1", "password2"),
+                "fields": (
+                    "name",
+                    "email",
+                    "password1",
+                    "password2",
+                ),
             },
         ),
     )
 
-    readonly_fields = ["date_joined", "last_login"]
+    readonly_fields = ["created_at", "last_login"]
 
 
 # User related

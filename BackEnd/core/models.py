@@ -22,8 +22,18 @@ class BaseModel(models.Model):
     # Primary Key
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
 
+    # Dates
+    modified_at = models.DateTimeField(auto_now=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+
     class Meta:
         abstract = True
+
+    def created_at_formatted(self):
+        return timesince(self.created_at)
+
+    def modified_at_formatted(self):
+        return timesince(self.modified_at)
 
 
 # User related
@@ -62,6 +72,8 @@ class User(AbstractBaseUser, PermissionsMixin, BaseModel):
     email = models.EmailField(unique=True)
     name = models.CharField(max_length=255, blank=True, null=True, default="")
     avatar = models.ImageField(upload_to="avatars", blank=True, null=True)
+
+    # Social Attributes
     post_count = models.IntegerField(default=0)
     friend_count = models.IntegerField(default=0)
     friends = models.ManyToManyField("self", blank=True)
@@ -71,10 +83,6 @@ class User(AbstractBaseUser, PermissionsMixin, BaseModel):
     is_active = models.BooleanField(default=True)
     is_staff = models.BooleanField(default=False)
     is_superuser = models.BooleanField(default=False)
-
-    # Dates
-    date_joined = models.DateTimeField(default=timezone.now)
-    last_login = models.DateTimeField(blank=True, null=True)
 
     objects = CustomUserManager()
 
@@ -107,15 +115,16 @@ class FriendRequest(BaseModel):
 
     # Attributes
     created_by = models.ForeignKey(
-        User, related_name="created_friend_request", on_delete=models.CASCADE
+        User,
+        on_delete=models.CASCADE,
+        related_name="created_friend_request",
     )
     created_for = models.ForeignKey(
-        User, related_name="received_friend_request", on_delete=models.CASCADE
+        User,
+        on_delete=models.CASCADE,
+        related_name="received_friend_request",
     )
     status = models.CharField(max_length=20, choices=STATUS_CHOICES, default=SENT)
-
-    # Dates
-    created_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self) -> str:
         return f"{self.status}: {self.created_by.name} -> {self.created_for.name}"
@@ -127,10 +136,14 @@ class FriendRequest(BaseModel):
 class Like(BaseModel):
 
     # Attributes
-    created_by = models.ForeignKey(User, related_name="likes", on_delete=models.CASCADE)
+    created_by = models.ForeignKey(
+        User,
+        related_name="likes",
+        on_delete=models.CASCADE,
+    )
 
-    # Dates
-    created_at = models.DateTimeField(auto_now_add=True)
+    class Meta:
+        ordering = ["created_at"]
 
 
 class Comment(BaseModel):
@@ -138,17 +151,13 @@ class Comment(BaseModel):
     # Attributes
     body = models.TextField(blank=True, null=True)
     created_by = models.ForeignKey(
-        User, related_name="comments", on_delete=models.CASCADE
+        User,
+        related_name="comments",
+        on_delete=models.CASCADE,
     )
-
-    # Dates
-    created_at = models.DateTimeField(auto_now_add=True)
 
     class Meta:
         ordering = ["created_at"]
-
-    def created_at_formatted(self):
-        return timesince(self.created_at)
 
 
 class PostAttachment(BaseModel):
@@ -156,7 +165,9 @@ class PostAttachment(BaseModel):
     # Attributes
     image = models.ImageField(upload_to="post_attachments/")
     created_by = models.ForeignKey(
-        User, related_name="post_attachments", on_delete=models.CASCADE
+        User,
+        on_delete=models.CASCADE,
+        related_name="post_attachments",
     )
 
     def image_url(self):
@@ -172,9 +183,6 @@ class Post(BaseModel):
     attachments = models.ManyToManyField(PostAttachment, blank=True)
     created_by = models.ForeignKey(User, related_name="posts", on_delete=models.CASCADE)
 
-    # Dates
-    created_at = models.DateTimeField(auto_now_add=True)
-
     # Likes and Comments
     like_count = models.IntegerField(default=0)
     comment_count = models.IntegerField(default=0)
@@ -184,18 +192,12 @@ class Post(BaseModel):
     class Meta:
         ordering = ["-created_at"]
 
-    def created_at_formatted(self):
-        return timesince(self.created_at)
-
 
 class Hashtag(BaseModel):
 
     # Attributes
     content = models.CharField(max_length=50)
     occurrence = models.IntegerField(default=0)
-
-    # Dates
-    modified_at = models.DateTimeField(auto_now=True)
 
     def __str__(self) -> str:
         return f"{self.content} - {self.occurrence}"
@@ -212,15 +214,8 @@ class Conversation(BaseModel):
     # Attributes
     users = models.ManyToManyField(User, related_name="conversations")
 
-    # Dates
-    created_at = models.DateTimeField(auto_now_add=True)
-    modified_at = models.DateTimeField(auto_now=True)
-
     class Meta:
         ordering = ["-modified_at"]
-
-    def modified_at_formatted(self):
-        return timesince(self.modified_at)
 
     def __str__(self) -> str:
         return ", ".join([user.name for user in self.users.all()])
@@ -230,24 +225,24 @@ class Message(BaseModel):
 
     # Attributes
     conversation = models.ForeignKey(
-        Conversation, related_name="messages", on_delete=models.CASCADE
+        Conversation,
+        related_name="messages",
+        on_delete=models.CASCADE,
     )
     sent_by = models.ForeignKey(
-        User, related_name="sent_messages", on_delete=models.CASCADE
+        User,
+        related_name="sent_messages",
+        on_delete=models.CASCADE,
     )
     sent_to = models.ForeignKey(
-        User, related_name="received_messages", on_delete=models.CASCADE
+        User,
+        related_name="received_messages",
+        on_delete=models.CASCADE,
     )
     body = models.TextField()
 
-    # Dates
-    created_at = models.DateTimeField(auto_now_add=True)
-
     class Meta:
         ordering = ["created_at"]
-
-    def created_at_formatted(self):
-        return timesince(self.created_at)
 
     def __str__(self) -> str:
         return f"{self.body} - {self.sent_by.name} -> {self.sent_to.name}"
@@ -281,15 +276,16 @@ class Notification(BaseModel):
     post = models.ForeignKey(Post, blank=True, null=True, on_delete=models.CASCADE)
 
     created_by = models.ForeignKey(
-        User, related_name="created_notifications", on_delete=models.CASCADE
+        User,
+        related_name="created_notifications",
+        on_delete=models.CASCADE,
     )
 
     created_for = models.ForeignKey(
-        User, related_name="received_notifications", on_delete=models.CASCADE
+        User,
+        related_name="received_notifications",
+        on_delete=models.CASCADE,
     )
-
-    # Dates
-    created_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self) -> str:
         return f"""

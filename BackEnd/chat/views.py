@@ -10,9 +10,6 @@ class ListCreateConversationAPIView(generics.ListCreateAPIView):
     queryset = Conversation.objects.all()
     serializer_class = ConversationSerializer
 
-    def get_queryset(self, user):
-        return Conversation.objects.filter(users__in=[user])
-
     def list(self, request):
         queryset = self.queryset.filter(users__in=[request.user])
         serializer = self.get_serializer(queryset, many=True)
