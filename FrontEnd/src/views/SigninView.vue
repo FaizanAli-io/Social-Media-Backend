@@ -89,7 +89,7 @@ export default {
             }
 
             if (this.errors.length === 0) {
-                await axios
+                axios
                     .post('/api/signin/', this.form)
                     .then(response => {
                         this.userStore.setToken(response.data)
@@ -97,11 +97,10 @@ export default {
                     })
                     .catch(error => {
                         console.log(error)
-
                         this.errors.push("The email or password is incorrect, or the user is not activated.")
                     })
 
-                await axios
+                axios
                     .get('/api/me/')
                     .then(response => {
                         this.userStore.setUserInfo(response.data)

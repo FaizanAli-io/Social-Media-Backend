@@ -47,7 +47,7 @@ export default {
             console.log(notif.id)
 
             axios
-                .post(`api/notification/${notif.id}`)
+                .patch('api/notification/', {id: notif.id})
                 .then(response => {
                     console.log('Data: ', response.data)
 

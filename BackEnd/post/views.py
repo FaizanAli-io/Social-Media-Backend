@@ -73,8 +73,6 @@ def post_create(request):
     post_form = PostForm(request.POST)
     attachment_form = AttachmentForm(request.POST, request.FILES)
 
-    print("start", post_form.data, "stop")
-
     if attachment_form.is_valid():
         attachment = attachment_form.save(commit=False)
         attachment.created_by = request.user
@@ -160,7 +158,7 @@ def post_delete(request, pk):
 
 
 @api_view(["GET"])
-def get_trending(request):
+def get_trending(_):
     objects = Hashtag.objects.filter()[:10]
     serializer = HashtagSerializer(objects, many=True)
 

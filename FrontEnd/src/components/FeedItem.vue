@@ -128,6 +128,7 @@ export default {
                 .post(`api/posts/${this.post.id}/like/`)
                 .then(response => {
                     console.log('Response: ', response.data)
+                    this.post.like_count += 1
                 })
                 .catch(error => {
                     console.log('Error: ', error)
@@ -139,7 +140,6 @@ export default {
                 .post(`api/posts/${this.post.id}/report/`)
                 .then(response => {
                     console.log('Response: ', response.data)
-
                     this.toastStore.showToast(5000, response.data.message, 'bg-emerald-300')
                 })
                 .catch(error => {
@@ -155,7 +155,6 @@ export default {
 
                     if (response.data.status === 'success') {
                         this.$emit('deletePost', this.post.id)
-
                         this.toastStore.showToast(5000, response.data.message, 'bg-emerald-300')
                     } else {
                         this.toastStore.showToast(5000, response.data.message, 'bg-red-300')
