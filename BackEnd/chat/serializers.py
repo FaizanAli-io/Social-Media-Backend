@@ -1,7 +1,7 @@
 from rest_framework import serializers
 
+from user.serializers import UserSerializer
 from core.models import Conversation, Message
-from account.serializers import UserSerializer
 
 
 class MessageSerializer(serializers.ModelSerializer):

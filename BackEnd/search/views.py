@@ -1,10 +1,10 @@
 from django.db.models import Q
-from django.http import JsonResponse
+from rest_framework.response import Response
 from rest_framework.decorators import api_view
 
 from core.models import User, Post
 from post.serializers import PostSerializer
-from account.serializers import UserSerializer
+from user.serializers import UserSerializer
 
 
 @api_view(["POST"])
@@ -20,10 +20,9 @@ def search(request):
     user_serializer = UserSerializer(users, many=True)
     post_serializer = PostSerializer(posts, many=True)
 
-    return JsonResponse(
+    return Response(
         {
             "users": user_serializer.data,
             "posts": post_serializer.data,
-        },
-        safe=False,
+        }
     )

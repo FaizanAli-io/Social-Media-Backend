@@ -7,8 +7,11 @@ from core.models import Post, Hashtag
 
 class Command(BaseCommand):
     def handle(self, *args, **options):
-        last_week = timezone.now() - timezone.timedelta(7)
-        posts = Post.objects.filter(created_at__gte=last_week, body__contains="#")
+        posts = Post.objects.filter(
+            is_private=False,
+            body__contains="#",
+            created_at__gte=timezone.now() - timezone.timedelta(7),
+        )
 
         hashtag_count = {}
         for post in posts:
@@ -28,4 +31,4 @@ class Command(BaseCommand):
             hashtag.occurrence = value
             hashtag.save()
 
-        self.stdout.write(self.style.SUCCESS("Successfully added trends."))
+        self.stdout.write(self.style.SUCCESS("Successfully generated trends."))

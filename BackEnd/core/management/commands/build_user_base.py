@@ -10,6 +10,7 @@ class Command(BaseCommand):
             email="admin@example.com",
             name="The Admin",
             password="123",
+            is_active=True,
         )
 
         get_user_model().objects.create_user(

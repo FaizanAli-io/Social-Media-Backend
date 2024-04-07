@@ -14,6 +14,7 @@ class CustomUserAdmin(UserAdmin):
             _("Credentials"),
             {
                 "fields": (
+                    "id",
                     "email",
                     "password",
                 )
@@ -32,9 +33,9 @@ class CustomUserAdmin(UserAdmin):
             _("Social Information"),
             {
                 "fields": (
-                    "friends",
                     "post_count",
                     "friend_count",
+                    "friends",
                     "people_you_may_know",
                 )
             },
@@ -75,7 +76,7 @@ class CustomUserAdmin(UserAdmin):
         ),
     )
 
-    readonly_fields = ["created_at", "last_login"]
+    readonly_fields = ["id", "created_at", "last_login"]
 
 
 # User related

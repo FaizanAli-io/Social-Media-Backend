@@ -1,7 +1,6 @@
-from account.serializers import UserSerializer
-
 from rest_framework.serializers import ModelSerializer
 
+from user.serializers import UserSerializer
 from core.models import Post, Comment, PostAttachment, Hashtag
 
 
@@ -44,4 +43,4 @@ class HashtagSerializer(ModelSerializer):
 
     class Meta:
         model = Hashtag
-        fields = ["id", "content", "occurrence", "modified_at"]
+        fields = ["id", "content", "occurrence"]
