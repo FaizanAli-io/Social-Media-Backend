@@ -27,9 +27,7 @@ SECRET_KEY = "django-insecure-j_x$ye5g-#yz=)psrw2c44bw5e$f8j6ww9ed+8=k7pdii4h@_3
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
-
-WEBSITE_URL = "http://api.wey.com"
+ALLOWED_HOSTS = [".vercel.app"]
 
 # Application definition
 
