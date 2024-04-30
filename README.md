@@ -2,6 +2,8 @@
 
 A Social Media Application Backend, built using Python and Django
 
+Currently deployed using Vercel at: [Website URL](https://social-media-backend-mf0tb715v-faizan-alis-projects-76e43fd9.vercel.app)
+
 Frontend available at: [Social Media Frontend](https://github.com/FaizanAli-io/Social-Media-Frontend)
 
 ## Table of Contents
@@ -28,32 +30,38 @@ Key features of the project.
 Provide instructions on how to install your project. Include any prerequisites and steps needed to get the project up and running.
 
 ### Clone the repository
+
 ```sh
 git clone <repository_url>
 ```
 
 ### Navigate to the project directory
+
 ```sh
 cd project-name
 ```
 
 ### Create and activate a virtual environment (optional but recommended)
+
 ```sh
 python -m venv venv
 .\venv\Scripts\activate
 ```
 
 ### Install dependencies
+
 ```sh
 pip install -r requirements.txt
 ```
 
 ### Run migrations
+
 ```sh
 python manage.py migrate
 ```
 
 ### Lint with Black
+
 ```sh
 black .
 ```
@@ -63,11 +71,13 @@ black .
 Explain how to use your project. Provide examples if necessary.
 
 ### Run the development server
+
 ```sh
 python manage.py runserver
 ```
 
 ### Access the project in a web browser
+
 ```sh
 http://localhost:8000/
 ```
