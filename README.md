@@ -2,7 +2,7 @@
 
 A Social Media Application Backend, built using Python and Django
 
-Currently deployed using Vercel at: [Website URL](https://social-media-backend-mf0tb715v-faizan-alis-projects-76e43fd9.vercel.app)
+Currently deployed using Vercel at: [Website URL](https://social-media-backend-alpha.vercel.app/)
 
 Frontend available at: [Social Media Frontend](https://github.com/FaizanAli-io/Social-Media-Frontend)
 
